@@ -1,0 +1,73 @@
+<div class="bg-light-gray container-fluid">
+    <div class="row min-vh100-50px">
+        <div class="col-lg-6 col-md-12 col-sm-12 p-0 split-graphic-side">
+            <div class="page-title-wrapper-hl">
+                <div class="d-flex flex-column hl-title-content">
+                    <a class="hl-logo" [routerLink]="['/auth', 'login']">
+                      <img src="assets/img/fawry-digital-logo.svg">
+                    </a>
+                    <div class="hl-title-text-wrapper">
+                        <div class="text-white line-1 mb-3">{{'fawry-digital' | translate}}</div>
+                        <div class="text-fawry-yellow line-2">{{'enabling-digital-evolution' | translate}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12 col-sm-12 d-flex flex-column p-5 login form-wrapper">
+
+            <div class="form-title mb-3">{{ 'login-button' | translate}}</div>
+
+            <div>
+                <form (ngSubmit)="f.valid && loginAction()" #f="ngForm" class="form-horizontal" >
+                <fieldset>
+                    <div class="env-radio-container form-group">
+                        <input type="radio" name="env" id="env-live" [disabled]="!isTestingEnvironment" (click)="switchEnvironment()" value="live">
+                        <label for="env-live" class="label-live">
+                            <span>{{ 'live' | translate}}</span>                            
+                        </label>
+                        <input type="radio" name="env" id="env-test" [disabled]="isTestingEnvironment" (click)="switchEnvironment()" checked value="test">
+                        <label for="env-test" class="label-test">
+                            <span>{{ 'test' | translate}}</span>
+                        </label>
+                    </div>
+    
+    
+                    <div class="form-group">
+                        <label for="userId" class="control-label text-capitalize">{{ 'email-mobile' | translate}}</label>
+                        <input id="loginIdentiferInput" class=" form-control input-lg" required id="userId" name="userId" #userId="ngModel"
+                                [(ngModel)]="userIdentifier" [pattern]="identifierPattern">
+                        <div class="help-block" *ngIf="userId.control.errors?.required && (userId.touched || f.submitted)">
+                            {{'login.user.name.required.message' | translate}}
+                        </div>
+                        <div class="help-block" *ngIf="userId.control.errors?.pattern && (userId.touched || f.submitted)">
+                            {{'login.user.name.pattern.message' | translate}}
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="password" class="control-label text-capitalize">{{ 'password' | translate}}</label>
+                        <input ngModel #pass="ngModel" required class=" form-control input-lg" type="password"
+                                 name="password" value="" id="password" [(ngModel)]="password">
+                        <div class="help-block" *ngIf="pass.control.errors?.required && (pass.touched || f.submitted)">
+                            {{'login.user.password.required.message' | translate}}
+                        </div>
+                    </div>
+                    <div class="d-flex form-group justify-content-between pull-right">
+                        <div>
+                            <a id="forgetPassbtn" [routerLink]="['/auth', 'forgot-password']" class="text-capitalize">{{ 'forgot-password-lbl' | translate }}</a>
+                        </div>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="form-group">
+
+                        <input type="submit" id="loginbtn" value="{{ 'login-button' | translate}}" class="btn btn-primary btn-block g-recaptcha" />
+                    </div>
+                </fieldset>
+                </form>
+            </div>
+            <div class="text-center">{{'dont-have-account' | translate}}<a id="notRegisteredbtn" [routerLink]="['/register']">{{ 'not-registred-lbl' | translate }}</a> </div>
+        </div>
+    </div>
+    <div class="headless-footer text-muted small">{{'fawry-copyrights' | translate}}</div>
+  </div>

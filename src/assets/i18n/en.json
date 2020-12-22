@@ -1,0 +1,17 @@
+{
+  "dont-have-account": "Don't have account? ",
+  "login-button": "Log In",
+  "live": "Live",
+  "test": "Test",
+  "email-mobile": "Email/Mobile",
+  "password": "Password",
+  "forgot-password-lbl": "Forgot Password?",
+  "not-registred-lbl": "Create an account!",
+  "fawry-copyrights": "Copyright © 2020 Fawry. All rights reserved.",
+  "fawry-digital": "fawry digital",
+  "enabling-digital-evolution": "enabling digital evolution",
+  "login.user.name.required.message": "Email/Mobile Required",
+  "login.user.password.required.message": "Password Required",
+  "create.account": "Create Account",
+  "login.user.name.pattern.message": "Invalid Email or mobile"
+}

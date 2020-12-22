@@ -1,0 +1,29 @@
+input.ng-invalid.ng-touched {
+    border: 1px solid red;
+  }
+  
+  .login-switch{
+    width: 50px;
+  }
+  
+  .login-switch-label,
+  .login-switch,
+  .login-switch-handle{
+    height: 20px;
+  }
+  
+  .login-switch-handle{
+    width: 20px;
+  }
+  
+  .switch-input:checked ~ .switch-handle {
+    left: 34px;
+    top: 3px;
+  }
+
+  
+  .help-block {
+    color: red;
+    font-size: 14px;
+  }
+  

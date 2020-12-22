@@ -1,1 +1,58 @@
 /* You can add global styles to this file, and also import other style files */
+.close-btn{ margin:5px 10px}
+.services-inner {
+  border: 2px solid #00587e;
+  margin-left: 15px; background: #fff;  transition: .3s;
+
+  -webkit-animation-name: errorMotion; /* Safari 4.0 - 8.0 */
+  -webkit-animation-duration: 4s; /* Safari 4.0 - 8.0 */
+  animation-name: errorMotion;
+  animation-duration: 0.7s;
+  position: relative;
+}
+.our-services-img {
+  float: left;
+  margin-left: -36px;
+  margin-right: 15px;
+  margin-top: 15px;
+  width: 60px !important;
+  height: auto;
+}
+.our-services-text {
+  padding-right: 10px;
+}
+.our-services-text {
+  overflow: hidden;
+  padding: 8px 0 18px;
+}
+.our-services-text h4 {
+  color: #222222;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  padding-bottom: 10px;
+  position: relative;
+
+}
+.our-services-text h4::before {
+  background: #ec6d48 none repeat scroll 0 0;
+  bottom: 0;
+  content: "";
+  height: 1px;
+  position: absolute;
+  width: 35px;
+}
+.our-services-wrapper:hover .services-inner {
+  background: #fff none repeat scroll 0 0;
+  border: 2px solid transparent;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.2);
+}
+.our-services-text p {
+  margin-bottom: 0;
+  padding:0em 0.8em 0em 0em;
+}
+.h4-success{ color: #5fba7d !important;}
+.h4-success::before{  background:  #5fba7d !important;}
+.h4-fail{ color: #00587e !important;}
+.h4-fail::before{  background:  #dddddd !important;}

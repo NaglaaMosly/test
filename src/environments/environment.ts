@@ -3,7 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  userApiBaseUrl: 'http://localhost:4402/api',
+  testingEnvironmentLoginUrl : 'https://atfawry.fawrystaging.com/merchant/login',
+  liveEnvironmentLoginUrl : 'https://atfawry.com/merchant/login',
+  liveEnvironmentHost : 'atfawry.com',
 };
 
 /*
