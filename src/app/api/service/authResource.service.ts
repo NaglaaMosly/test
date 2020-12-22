@@ -24,7 +24,7 @@ export class AuthResourceService {
     constructor(private apiClient: ApiClient) {}
 
     public changePassword(changePasswordRequest: ChangePasswordRequest): Observable<ResponseEntity> {
-      return this.apiClient.postRequest<ResponseEntity>(`${environment.userApiBaseUrl}/auth/password/change`, changePasswordRequest);
+      return this.apiClient.putRequest<ResponseEntity>(`${environment.userApiBaseUrl}/auth/password/change`, changePasswordRequest);
     }
 
     public forgetPassword(mobileNumber: string): Observable<ResponseEntity> {

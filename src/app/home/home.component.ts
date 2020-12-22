@@ -11,8 +11,7 @@ export class HomeComponent {
 
   applications;
 
-  constructor(public translate: TranslateService,
-              private authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   changeLocal() {
     // this.translate.currentLang === Constants.ENGLISH_LOCAL_ID ? this.arabicStyleLoader.load() : this.arabicStyleLoader.unload();

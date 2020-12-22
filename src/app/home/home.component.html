@@ -12,18 +12,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
-    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-  
-    <li class="nav-item">
-    <a class="nav-link" translate>What we offer</a>
-    </li>
-    <li class="nav-item">
-    <a class="nav-link" translate>FAQ</a>
-    </li>
-      <li class="nav-item">
-        <a class="nav-link" translate>Contact us</a>
-      </li>
-    </ul>
+
   
       <div class="form-inline my-2 my-lg-0">
   
@@ -34,7 +23,7 @@
             <span class="nav-link">{{loggedInUserName}}</span>
           </li>
   
-          <li *ngFor="let app of accessibleApplications">
+          <li *ngFor="let app of accessibleApplications" class="nav-item">
             <a id="app" class="nav-link" [href]="app.url" role="button" >{{ app | translateName}}</a>
           </li>
           
@@ -43,7 +32,7 @@
             <a id="logoutBtnLink" *ngIf="isLoggedIn()" class="nav-link loginBtn" href (click)="logout()" translate>logout</a>
           </li>
   
-          <li><button id="changeLngLink" type="button" class="btn btn-warning btn-sm" (click)="changeLocal()">{{translate.currentLang === 'ar' ? 'English' : 'العربية'}}</button></li>
+          <li><button id="changeLngLink" type="button" class="btn btn-warning btn-sm mt-2 pt-1" (click)="changeLocal()">{{'negative-local-key' | translate}}</button></li>
         </ul>
   
   

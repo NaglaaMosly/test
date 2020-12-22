@@ -20,7 +20,9 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   addAuthToken(req: HttpRequest<any>) {
-    return req.clone({setHeaders: {Authorization: "Bearer " + this.authService.getToken()}});
+    const token = this.authService.getToken() || sessionStorage.getItem('temp_token');   
+    return req.clone({setHeaders: {Authorization: "Bearer " + token}});
+    // temp token is token with minimal calims just to allow user to change password
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<any> {
