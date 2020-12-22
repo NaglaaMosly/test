@@ -1,3 +1,5 @@
+import { ArabicStyleLoaderService } from './../shared/arabic-style-loader.service';
+import { Constants } from './../shared/constants';
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from './../auth/auth.service';
@@ -11,10 +13,12 @@ export class HomeComponent {
 
   applications;
 
-  constructor(private authService: AuthService) {}
+  constructor(public translate: TranslateService,
+              private authService: AuthService,
+              private arabicStyleLoader: ArabicStyleLoaderService) {}
 
   changeLocal() {
-    // this.translate.currentLang === Constants.ENGLISH_LOCAL_ID ? this.arabicStyleLoader.load() : this.arabicStyleLoader.unload();
+    this.translate.currentLang === Constants.ENGLISH_LOCAL_ID ? this.arabicStyleLoader.load() : this.arabicStyleLoader.unload();
   }
 
   logout() {

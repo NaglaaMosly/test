@@ -1,3 +1,5 @@
+import { ArabicStyleLoaderService } from './shared/arabic-style-loader.service';
+import { Constants } from './shared/constants';
 import { AuthService } from './auth/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component } from '@angular/core';
@@ -14,13 +16,14 @@ export class AppComponent {
     private translate: TranslateService,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService) {
+    private authService: AuthService,
+    private arabicStyleLoader: ArabicStyleLoaderService) {
     
   }
 
 
   ngOnInit(): void {
-    this.setDefaultLang();
+    this.initTranslateAndDocDir();
     this.subscribeToRouteParams();
   }
 
@@ -37,8 +40,11 @@ export class AppComponent {
     }
   }
 
-  private setDefaultLang() {
-    this.translate.setDefaultLang('en');
-    this.translate.use('en');
+  initTranslateAndDocDir() {
+    const local = localStorage.getItem('local') || Constants.ENGLISH_LOCAL_ID;
+    this.translate.setDefaultLang(Constants.ENGLISH_LOCAL_ID);
+    this.translate.use(local);
+    document.dir = local === Constants.ARABIC_LOCAL_ID ? 'rtl' : 'ltr';
+    document.dir === 'rtl' && this.arabicStyleLoader.appendArabicStyleToHead();
   }
 }
