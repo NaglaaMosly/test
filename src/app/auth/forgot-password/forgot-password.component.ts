@@ -33,49 +33,53 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   resendVerificationSms() {
-      this.authService.forgetPassword(this.mobileNumber).subscribe(results => {
+    this.authService.forgetPassword(this.mobileNumber)
+      .subscribe(results => {
         this.smsResended = true;
       });
   }
 
   sendVerificationSms() {
     if (this.mobileForm.valid) {
-      this.authService.forgetPassword(this.mobileNumber).subscribe(results => {
-        this.stepper.selected.completed = true;
-        this.smsSended = true;
-        this.stepper.next();
-      });
+      this.authService.forgetPassword(this.mobileNumber)
+        .subscribe(results => {
+          this.smsSended = true;
+          this.moveStepperToNextStep();
+        });
     }
   }
 
   verifyCode() {
     this.smsResended = false;
-    const verifyForgetPasswordRequest = <VerifyForgetPasswordRequest>{};
+    const verifyForgetPasswordRequest: VerifyForgetPasswordRequest = {};
     verifyForgetPasswordRequest.userIdentifier = this.mobileNumber;
     verifyForgetPasswordRequest.forgetPasswordToken = this.verificationCode;
     this.authService.verifyResetPassword(verifyForgetPasswordRequest)
       .subscribe(results => {
-        this.stepper.selected.completed = true;
         this.codeVerified = true;
-        this.stepper.next();
+        this.moveStepperToNextStep();
       });
   }
 
   resetPassword() {
-    const resetPasswordRequest = <ResetPasswordRequest>{};
+    const resetPasswordRequest : ResetPasswordRequest = {};
     resetPasswordRequest.userIdentifier = this.mobileNumber;
     resetPasswordRequest.forgetPasswordToken = this.verificationCode;
     resetPasswordRequest.newPassword = this.password;
     this.authService.resetPassword(resetPasswordRequest)
       .subscribe(results => {
-        this.stepper.selected.completed = true;
         this.passwordChanged = true;
-        this.stepper.next();
+        this.moveStepperToNextStep();
       });
+  }
+
+  moveStepperToNextStep() {
+    this.stepper.selected.completed = true;
+    this.stepper.next();
   }
 
   backToStepOne() {
     this.stepper.reset();
   }
-  
+
 }
