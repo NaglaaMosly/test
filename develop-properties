@@ -1,0 +1,4 @@
+app_profile = 'dev'
+imageName = 'be-login-ui-${GIT_LOCAL_BRANCH}'
+imageTag = 'latest'
+containerName = 'be-login-ui-${GIT_LOCAL_BRANCH}'
