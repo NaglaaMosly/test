@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
     name: be-login-ui-develop
-    namespace: business-entity-app
+    namespace: fawry-user-app
 spec:
   selector:
     matchLabels:
@@ -23,8 +23,6 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 80
-          name: http
-        - containerPort: 443
           name: https
         env:
         - name: FOR_GODS_SAKE_PLEASE_REDEPLOY
