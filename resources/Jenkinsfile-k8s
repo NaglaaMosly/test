@@ -1,0 +1,87 @@
+pipeline {
+
+	agent any
+    environment {
+        def btime="${BUILD_TIMESTAMP}"
+     }
+	
+	stages {
+		  
+		stage('Load env variables') {
+			steps {
+				sh 'printenv';
+				
+			script {
+					load("./${GIT_LOCAL_BRANCH}-properties")
+				  }
+				sh "echo imageTag: ${imageTag}"
+				sh "echo imageName: ${imageName}"
+				sh "echo containerName: ${containerName}"
+				sh "echo app_profile: ${app_profile}"	
+		    }
+		}
+		
+		stage('Set env variables') {
+			steps {
+                  sh ("sed -i.bak 's#app_profile#${app_profile}#g'  resources/Dockerfile-build")
+				}
+			}
+
+	    stage('Build stage') {
+        		steps {
+				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true"
+				sh "docker rmi ${imageName}-build:${imageTag} || true"
+				sh "rm -rf ./dist"	
+				sh "docker build -f resources/Dockerfile-build  -t ${imageName}-build:${imageTag} ."
+                sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
+            	}  
+	    	}
+			
+		stage('Transition stage') {
+			steps {
+				//copy files from the container to the job
+				sh "docker cp ${containerName}-build:/opt/app/dist  ."
+				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true"
+			}
+		}
+			
+		
+		stage('Archive') {
+
+            steps {
+                    sh 'tar -cvzf be-login-ui.tar.gz --strip-components=1  ./dist'
+                    archiveArtifacts 'be-login-ui.tar.gz'
+                }
+            }
+	
+			
+	   stage("Docker Push"){
+			steps {
+			    sh "docker build -f resources/Dockerfile-k8s -t node2:5000/${imageName}${imageTag} -t node2:5000/${imageName}:${BUILD_ID} ."
+				sh "docker push node2:5000/${imageName}:${BUILD_ID}"
+				}
+			}
+			
+		  stage('Deploy on k8s') {
+		  
+		  		agent { 
+                     docker { image "node2:5000/${imageName}:${BUILD_ID}" 
+                      args '-v /var/run/docker.sock:/var/run/docker.sock  -v /home/devops/.kube/config:/home/agent/.kube/config' } 
+                 	}
+					 
+	            steps {
+				
+					//Set env variables
+					sh "sed -i.bak 's#BUILDID#${env.BUILD_ID}#'                   resources/deployment.yaml"
+					sh "sed -i 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$btime/g'  resources/deployment.yaml"
+					sh "cat   resources/deployment.yaml"
+					
+				    sh ("kubectl apply -f resources/ns.yaml")
+					sh ("kubectl apply -f resources/svc.yaml")
+					sh ("kubectl apply -f resources/deployment.yaml")
+					
+					sh "echo you can access app by visiting http://10.95.0.182:30817"
+			}	
+		}
+	}
+}
