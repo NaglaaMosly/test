@@ -1,3 +1,27 @@
 {
-  
+    "dont-have-account": "ليس لديك حساب؟ ",
+    "login-button": "تسجيل الدخول",
+    "live": "بيئة حقيقية",
+    "test": "بيئة تجريبية",
+    "email-mobile": "بريد إليكتروني/موبايل",
+    "password": "كلمة المرور",
+    "forgot-password-lbl": "نسيت كلمة السر؟",
+    "fawry-copyrights": "حقوق الملكية © محفوظة لشركة فوري",
+    "fawry-digital": "فوري ديجيتال",
+    "enabling-digital-evolution": "تمكين التحول الرقمي",
+    "login.user.name.required.message": "البريد الإلكتروني/الموبايل مطلوب",
+    "login.user.password.required.message": "كلمة المرور مطلوبه",
+    "create.account": "أنشئ حساب!",
+    "login.user.name.pattern.message": "بريد إليكتروني أو موبايل غير صحيح",
+    "change-password-title": "برجاء تغيير كلمة السر",
+    "required-field": "مطلوب",
+    "password-mismatch": "كلمة المرور غير متطابقه",
+    "change": "تغيير",
+    "confirm-password": "تأكيد كلمة المرور",
+    "new-password": "كلمة المرور الجديدة",
+    "current-password": "كلمة المرور الحالية",
+    "password-min-length-error": "كلمة المرور يجب أن تكون 6 أحرف/أرقام على الأقل",
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "negative-local-key": "English"
 }

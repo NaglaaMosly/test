@@ -740,7 +740,7 @@ header {
 }
 
 .well {
-    max-width: 80%;
+    max-width: 60%;
     margin: auto;
     padding: 2em;
     border-inline-start: 100px solid #006b99;
