@@ -5,7 +5,7 @@ metadata:
   labels:
     name: be-login-ui-develop
   name: be-login-ui-develop
-  namespace: business-entity-app
+  namespace: fawry-user-app
 spec:
   type: NodePort
   ports:
