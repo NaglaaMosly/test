@@ -6,7 +6,7 @@
                     <a class="hl-logo" [routerLink]="['/auth', 'login']">
                       <img src="assets/img/fawry-digital-logo.svg">
                     </a>
-                    <div class="hl-title-text-wrapper">
+                    <div class="hl-title-text-wrapper hide-mobile">
                         <div class="text-white line-1 mb-3">{{'fawry-digital' | translate}}</div>
                         <div class="text-fawry-yellow line-2">{{'enabling-digital-evolution' | translate}}</div>
                     </div>
@@ -66,7 +66,7 @@
                 </fieldset>
                 </form>
             </div>
-            <div class="text-center">{{'dont-have-account' | translate}}<a id="notRegisteredbtn" [routerLink]="['/register']">{{ 'create.account' | translate }}</a> </div>
+           <!-- <div class="text-center">{{'dont-have-account' | translate}}<a id="notRegisteredbtn" [routerLink]="['/register']">{{ 'not-registred-lbl' | translate }}</a> </div> -->
         </div>
     </div>
     <div class="headless-footer text-muted small">{{'fawry-copyrights' | translate}}</div>
