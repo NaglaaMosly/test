@@ -22,7 +22,7 @@ export class ForgotPasswordComponent implements OnInit {
   passwordConfirmation: string;
 
   mobilePattern = "^(\\+2)?(002)?((010|011|012|015)[0-9]{8})$";
-  passwordPattern = "^.{4,20}$";
+  passwordPattern = "^.{6,20}$";
 
   @ViewChild('mobileForm') mobileForm: NgForm;
   @ViewChild('stepper') stepper: MatStepper;

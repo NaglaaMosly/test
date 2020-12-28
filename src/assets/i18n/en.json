@@ -28,7 +28,7 @@
   "forget_password_enter_mobile_number": "Enter mobile number",
   "forget_password_mobile_error_invalid": "please enter valid mobile number",
   "forget_password_mobile_error_not_exist": "Mobile Number is not exist",
-  "forget_password_error_max_trials_exceeded": "you exceeded the number of forget password trials",
+  "forget_password_error_max_trials_exceeded": "you exceeded the number of forgot password trials",
   "forget_password_send_sms_btn": "Send SMS",
   "forget_password_label": "Forget password",
   "forget_password_verify_code": "Verify Code",
@@ -44,12 +44,14 @@
   "forget_password_back_btn": "Back",
   "forget_password_verify_btn": "Verify",
   "forget_password_new_password_label": "Enter new password",
-  "forget_password_error_password_invalid": "password size must be at least 4 characters",
+  "forget_password_error_password_invalid": "password size must be at least 6 characters",
   "forget_password_error_password_not_match": "the password and confirmation doesn't match",
   "forget_password_done_btn": "Done",
   "forget_password_new_password_confirmation_label": "New password confirmation",
   "forget_password_change_password_label": "Change Password",
   "forgot-your-password": "forgot your password?",
   "we-got-you": "we got you!",
-  "forget-password-hint": "Enter the mobile number associated with your account and we'll send you a SMS with your account information."
+  "forget-password-hint": "Enter the mobile number associated with your account and we'll send you a SMS with your account information.",
+  "forget_password_done":"Forget password done successfully",
+  "forget_password_mobile":"mobile"
 }
