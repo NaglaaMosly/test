@@ -88,7 +88,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "be-login-ui:build"
+            "browserTarget": "be-login-ui:build",
+            "port": 4201
           },
           "configurations": {
             "production": {
