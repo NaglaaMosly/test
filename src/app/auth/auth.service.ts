@@ -19,6 +19,7 @@ export class AuthService {
 
 	private decodedToken;
 	private applications: ApplicationModel[];
+	private applications$: Observable<ApplicationModel[]>;
 
 	constructor(private authResourceService: AuthResourceService, private router: Router) { }
 
@@ -38,12 +39,12 @@ export class AuthService {
 	}
 
 	logout() {
-	this.decodedToken = null;
-	this.applications = [];
-	localStorage.removeItem(Constants.LOGGED_IN_USER);
-	CookieUtil.remove(Constants.TOKEN);
-	CookieUtil.remove(Constants.REFRESH_TOKEN);
-	this.router.navigateByUrl("/");
+		this.decodedToken = null;
+		this.applications = [];
+		localStorage.removeItem(Constants.LOGGED_IN_USER);
+		CookieUtil.remove(Constants.TOKEN);
+		CookieUtil.remove(Constants.REFRESH_TOKEN);
+		this.router.navigateByUrl("/");
 	}
 
 	changePassword(changePasswordRequest: ChangePasswordRequest): Observable<ResponseEntity> {
@@ -55,10 +56,10 @@ export class AuthService {
 	}
 
 	saveLoginData(loginResponse: LoginResponse) {
-	console.log('saveLoginData', loginResponse, TokenUtil.parse(loginResponse.token));
-	this.decodedToken = TokenUtil.parse(loginResponse.token);
-	this.shareTokenIntoCookie(Constants.TOKEN, loginResponse.token);
-	this.shareTokenIntoCookie(Constants.REFRESH_TOKEN, loginResponse.refreshToken);
+		console.log('saveLoginData', loginResponse, TokenUtil.parse(loginResponse.token));
+		this.decodedToken = TokenUtil.parse(loginResponse.token);
+		this.shareTokenIntoCookie(Constants.TOKEN, loginResponse.token);
+		this.shareTokenIntoCookie(Constants.REFRESH_TOKEN, loginResponse.refreshToken);
 	}
 
 	/**
@@ -66,50 +67,48 @@ export class AuthService {
 	 * only the token is being saved because of cookie size limitation
 	 */
 	private shareTokenIntoCookie(name: string, value: string) {
-	CookieUtil.set(name, value);
+		CookieUtil.set(name, value);
 	}
 
 	changeToken(token: string) {
-	this.shareTokenIntoCookie(Constants.TOKEN, token);
+		this.shareTokenIntoCookie(Constants.TOKEN, token);
 	}
 
 	refreshToken() {
-	return this.authResourceService.refreshToken(this.getToken());
+		return this.authResourceService.refreshToken(this.getToken());
 	}
 
 	getToken() {
-	return CookieUtil.get(Constants.TOKEN);
+		return CookieUtil.get(Constants.TOKEN);
 	}
 
 	getDecodedToken() {
-	if (this.decodedToken == null) {
-		const token = this.getToken();
-		if (token) {
-		this.decodedToken = TokenUtil.parse(token);
+		if (this.decodedToken == null) {
+			const token = this.getToken();
+			if (token) {
+			this.decodedToken = TokenUtil.parse(token);
+			}
 		}
-	}
-	return this.decodedToken;
+		return this.decodedToken;
 	}
 
 	getLoggedInUserName() {
-	let a = this.getDecodedToken()?.sub;
-	return this.getDecodedToken()?.sub || null;
+		let a = this.getDecodedToken()?.sub;
+		return this.getDecodedToken()?.sub || null;
 	}
 
 	loadAccessibleApplications() {
-	if (this.decodedToken && this.decodedToken.aud) {
-		const audience = new Array(this.decodedToken.aud);
-		this.authResourceService.findApplicationsByCodes(audience)
-		.subscribe(apps => this.applications = apps);
-	}
-	
+		if (this.decodedToken && this.decodedToken.aud) {
+			const audience = new Array(this.decodedToken.aud);
+			this.applications$ = this.authResourceService.findApplicationsByCodes(audience);
+			this.applications$.subscribe(apps => this.applications = apps);
+		}
 	}
 
 	getAccessibleApplication() {
-	if (this.applications == null) {
-		this.loadAccessibleApplications();
-		return [];
-	}
-	return this.applications;
+		if (this.applications == null && this.applications$ == null) {
+			this.loadAccessibleApplications();
+		}
+		return this.applications || [];
 	}
 }
