@@ -29,19 +29,22 @@ export class LoginComponent implements OnInit {
   initRedirectUrl() {
     this.route.queryParams
     .subscribe(params => {
-		this.params = params;
-		if (params['redirect-to']) {
-			this.redirectTo = params['redirect-to'];
-			try {
-			this.redirectTo = atob(this.redirectTo);
-			} catch (error) {
-			console.warn('redirection URL is not properly encoded');
-			}
-			if (this.authService.isUserLoggedIn()) {
-			window.location.href = this.redirectTo;
-			}
-		}
-  });
+      this.params = params;
+      if (params['redirect-to']) {
+        this.redirectTo = params['redirect-to'];
+        try {
+          this.redirectTo = atob(this.redirectTo);
+        } catch (error) {
+          console.warn('redirection URL is not properly encoded');
+        }
+        if (this.authService.isUserLoggedIn()) {
+          let redirectionAllowed = this.authService.registerRedirectionAndAskForNewOne();
+          if (redirectionAllowed) {
+            window.location.href = this.redirectTo;
+          }
+        }
+      }
+    });
   }
 
   loginAction() {
