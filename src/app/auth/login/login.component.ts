@@ -22,7 +22,6 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-    console.log(Date.now());
     this.initRedirectUrl();
 	  this.isTestingEnvironment = this.checkIfTestingEnvironment();
   }
