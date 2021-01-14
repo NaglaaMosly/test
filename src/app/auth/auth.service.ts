@@ -30,10 +30,10 @@ export class AuthService {
 		}
 		return this.authResourceService.login(loginRequest).pipe(
 			tap((response: LoginResponse) => {
-			if (!response.mustChangePassword){
-				this.saveLoginData(response);
-				this.loadAccessibleApplications();
-			}
+				if (!response.mustChangePassword){
+					this.saveLoginData(response);
+					this.loadAccessibleApplications();
+				}
 			})
 		);
 	}
@@ -93,7 +93,6 @@ export class AuthService {
 	}
 
 	getLoggedInUserName() {
-		let a = this.getDecodedToken()?.sub;
 		return this.getDecodedToken()?.sub || null;
 	}
 
@@ -110,5 +109,31 @@ export class AuthService {
 			this.loadAccessibleApplications();
 		}
 		return this.applications || [];
+	}
+
+	public registerRedirectionAndAskForNewOne(): boolean {
+		let allowRedirection = true;
+		let loginRedirectionsWindow = CookieUtil.get('lrw');
+		console.log('loginRedirectionsWindow', loginRedirectionsWindow);
+		if (loginRedirectionsWindow) {
+			console.log('loginRedirectionsWindow HAS VALUE');
+			let redirections = loginRedirectionsWindow.split('-');
+			if (redirections.length == 3) {
+				let duration = parseInt(redirections[2]) - parseInt(redirections[0]);
+				if (duration < 20000) {
+					console.log("Possible infinite login redirections detected");
+					allowRedirection = false;
+				}
+				redirections.splice(0, 1);
+			}
+			redirections.push(Date.now().toString());
+			loginRedirectionsWindow = redirections.join('-');
+			console.log('redirections', redirections);
+		} else {
+			loginRedirectionsWindow = Date.now().toString();
+		}
+		
+		CookieUtil.set('lrw', loginRedirectionsWindow);
+		return allowRedirection;
 	}
 }
