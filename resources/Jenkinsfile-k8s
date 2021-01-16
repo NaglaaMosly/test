@@ -80,7 +80,7 @@ pipeline {
 					sh ("kubectl apply -f resources/svc.yaml")
 					sh ("kubectl apply -f resources/deployment.yaml")
 					
-					sh "echo you can access app by visiting http://10.95.0.182:30815"
+					sh "echo you can access app by visiting http://10.95.0.182:30846"
 			}	
 		}
 	}
