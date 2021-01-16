@@ -1,4 +1,4 @@
-app_profile = 'dev'
+app_profile = 'alpha'
 imageName = 'be-login-ui-${GIT_LOCAL_BRANCH}'
 imageTag = 'latest'
 containerName = 'be-login-ui-${GIT_LOCAL_BRANCH}'
