@@ -56,11 +56,11 @@
                 }
               ]
             },
-              "dev": {
+              "alpha": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
+                  "with": "src/environments/environment.alpha.ts"
                 }
               ],
               "optimization": true,
