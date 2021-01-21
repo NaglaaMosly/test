@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: be-login-ui-alpha
-        image: node2:5000/be-login-ui-alpha:BUILDID
+        image: node2:5000/be-login-ui-develop:BUILDID
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -28,6 +28,6 @@ spec:
         - name: FOR_GODS_SAKE_PLEASE_REDEPLOY
           value: 'THIS_STRING_IS_REPLACED_DURING_BUILD'
         - name: BUILD_ENV
-          value: "alpha"
+          value: "develop"
         - name: BUILD_ID
           value: 'BUILDID'
