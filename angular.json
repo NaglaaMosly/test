@@ -56,8 +56,7 @@
                 }
               ]
             },
-           "configurations": {
-            "dev": {
+             "dev": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -83,7 +82,7 @@
                   "maximumError": "10kb"
                 }
               ]
-            },
+              },
               "alpha": {
               "fileReplacements": [
                 {
