@@ -2,12 +2,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: be-login-ui-alpha
+    name: be-login-ui-develop
     namespace: fawry-user-app
 spec:
   selector:
     matchLabels:
-      name: be-login-ui-alpha
+      name: be-login-ui-develop
   replicas: 1
   strategy:
     type: Recreate
@@ -15,10 +15,10 @@ spec:
   template:
     metadata:
       labels:
-        name: be-login-ui-alpha
+        name: be-login-ui-develop
     spec:
       containers:
-      - name: be-login-ui-alpha
+      - name: be-login-ui-develop
         image: node2:5000/be-login-ui-develop:BUILDID
         imagePullPolicy: Always
         ports:
