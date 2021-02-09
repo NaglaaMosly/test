@@ -58,6 +58,7 @@ export class AuthService {
 	saveLoginData(loginResponse: LoginResponse) {
 		console.log('saveLoginData', loginResponse, TokenUtil.parse(loginResponse.token));
 		this.decodedToken = TokenUtil.parse(loginResponse.token);
+		localStorage.setItem(Constants.TOKEN, loginResponse.token);
 		this.shareTokenIntoCookie(Constants.TOKEN, loginResponse.token);
 		this.shareTokenIntoCookie(Constants.REFRESH_TOKEN, loginResponse.refreshToken);
 	}

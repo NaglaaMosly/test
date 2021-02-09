@@ -12,6 +12,7 @@ import { AuthService } from './../auth/auth.service';
 export class HomeComponent {
 
   applications;
+  currentUser: string;
 
   constructor(public translate: TranslateService,
               private authService: AuthService,
