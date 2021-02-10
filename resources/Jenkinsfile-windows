@@ -1,0 +1,62 @@
+pipeline {
+
+	agent any
+	 	
+	stages {
+		  
+		stage('Load env variables') {
+			steps {
+				sh 'printenv';
+				
+			script {
+					load("./${GIT_LOCAL_BRANCH}-properties")
+				  }
+				sh "echo imageTag: ${imageTag}"
+				sh "echo imageName: ${imageName}"
+				sh "echo containerName: ${containerName}"
+				sh "echo app_profile: ${app_profile}"	
+		    }
+		}
+		
+	    stage('Set env variables') {
+			steps {
+                  sh ("sed -i.bak 's#app_profile#${app_profile}#g'  resources/Dockerfile-build")
+				}
+			}
+
+	    stage('Build stage') {
+        		steps {
+				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true"
+				sh "docker rmi ${imageName}-build:${imageTag} || true "
+				sh "rm -rf ./be-login"	
+				sh "docker build -f resources/Dockerfile-build  -t ${imageName}-build:${imageTag} ."
+                sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
+            	}  
+	    	}
+			
+		stage('Transition stage') {
+			steps {
+				//copy files from the container to the job
+				sh "docker cp ${containerName}-build:/opt/app/dist  ./be-login"
+			}
+		}
+		
+		stage('Archive') {
+            steps {
+                    sh 'tar -cvzf be-login.tar.gz --strip-components=1  ./be-login'
+                    archiveArtifacts 'be-login.tar.gz'
+                }
+            }
+			
+	    stage('Deploy on windows server') {
+		  	steps{
+			  
+			   // sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login'
+				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
+				transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
+				
+				sh "echo you can access app by going to 10.95.0.178 machine and write http://be-login.fawry.com/  or http://be-login  in the web browser"
+			}
+		}
+	}
+}
