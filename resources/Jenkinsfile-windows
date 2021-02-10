@@ -27,7 +27,7 @@ pipeline {
 	    stage('Build stage') {
         		steps {
 				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true"
-				sh "docker rmi ${imageName}-build:${imageTag} || true "
+				//sh "docker rmi ${imageName}-build:${imageTag} || true "
 				sh "rm -rf ./be-login-ui"	
 				sh "docker build -f resources/Dockerfile-build  -t ${imageName}-build:${imageTag} ."
                 sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
