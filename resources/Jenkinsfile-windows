@@ -1,0 +1,61 @@
+pipeline {
+
+	agent any
+	 	
+	stages {
+		  
+		stage('Load env variables') {
+			steps {
+				sh 'printenv';
+				
+			script {
+					load("./${GIT_LOCAL_BRANCH}-properties")
+				  }
+				sh "echo imageTag: ${imageTag}"
+				sh "echo imageName: ${imageName}"
+				sh "echo containerName: ${containerName}"
+				sh "echo app_profile: ${app_profile}"	
+		    }
+		}
+		
+	    stage('Set env variables') {
+			steps {
+                  sh ("sed -i.bak 's#app_profile#${app_profile}#g'  resources/ci/Dockerfile-build")
+				}
+			}
+
+	    stage('Build stage') {
+        		steps {
+				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true"
+				sh "docker rmi ${imageName}-build:${imageTag} || true "
+				sh "rm -rf ./be-login-ui"	
+				sh "docker build -f resources/ci/Dockerfile-build  -t ${imageName}-build:${imageTag} ."
+                sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
+            	}  
+	    	}
+			
+		stage('Transition stage') {
+			steps {
+				//copy files from the container to the job
+				sh "docker cp ${containerName}-build:/opt/app/dist  ./be-login-ui"
+			}
+		}
+		
+		stage('Archive') {
+            steps {
+                    sh 'tar -cvzf be-login-ui.tar.gz --strip-components=1  ./be-login-ui'
+                    archiveArtifacts 'be-login-ui.tar.gz'
+                }
+            }
+			
+	    stage('Deploy on windows server') {
+		  	steps{
+			  
+				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
+				transfers: [sshTransfer( sourceFiles: 'be-login-ui/**')])])
+				
+				sh "echo you can access app by going to 10.95.0.178 machine and write http://user-manage-ui.fawry.com/ in the web browser"
+			}
+		}
+	}
+}
