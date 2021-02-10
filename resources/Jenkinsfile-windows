@@ -54,7 +54,7 @@ pipeline {
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
 				transfers: [sshTransfer( sourceFiles: 'be-login-ui/**')])])
 				
-				sh "echo you can access app by going to 10.95.0.178 machine and write http://user-manage-ui.fawry.com/ in the web browser"
+				sh "echo you can access app by going to 10.95.0.178 machine and write http://be-login-ui.fawry.com/  or http://be-login-ui  in the web browser"
 			}
 		}
 	}
