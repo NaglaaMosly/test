@@ -27,7 +27,7 @@ pipeline {
 	    stage('Build stage') {
         		steps {
 				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true"
-				//sh "docker rmi ${imageName}-build:${imageTag} || true "
+				sh "docker rmi ${imageName}-build:${imageTag} || true "
 				sh "rm -rf ./be-login-ui"	
 				sh "docker build -f resources/Dockerfile-build  -t ${imageName}-build:${imageTag} ."
                 sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
@@ -51,7 +51,7 @@ pipeline {
 	    stage('Deploy on windows server') {
 		  	steps{
 			  
-			    sh 'ssh Administrator@10.95.0.178  powershell.exe  rm  C:/Apache24/htdocs/be-login-ui'
+			    sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login-ui'
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
 				transfers: [sshTransfer( sourceFiles: 'be-login-ui/**')])])
 				
