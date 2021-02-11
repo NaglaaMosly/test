@@ -51,11 +51,10 @@ pipeline {
 	    stage('Deploy on windows server') {
 		  	steps{
 			  
-			   // sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login'
+			   // sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/consumer'
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
 				transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
 				
-				sh "echo you can access app by going to 10.95.0.178 machine and write http://be-login.fawry.com/  or http://be-login  in the web browser"
 			}
 		}
 	}
