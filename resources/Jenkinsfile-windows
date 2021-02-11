@@ -51,9 +51,9 @@ pipeline {
 	    stage('Deploy on windows server') {
 		  	steps{
 			  
-			   sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/atfawry/be-login'
+			  // sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/atfawry/be-login'
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
-				transfers: [sshTransfer( sourceFiles: 'atfawry/be-login/**')])])
+				transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
 				
 			}
 		}
