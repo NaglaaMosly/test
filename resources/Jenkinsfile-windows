@@ -20,24 +20,24 @@ pipeline {
 		
 	    stage('Set env variables') {
 			steps {
-                  sh ("sed -i.bak 's#app_profile#${app_profile}#g'  resources/Dockerfile-win")
+                  sh ("sed -i.bak 's#app_profile#${app_profile}#g'  resources/Dockerfile-build")
 				}
 			}
 
 	    stage('Build stage') {
         		steps {
-				sh "docker stop ${containerName}-win || true && docker rm ${containerName}-win || true"
-				sh "docker rmi ${imageName}-win:${imageTag} || true "
+				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true"
+				sh "docker rmi ${imageName}-build:${imageTag} || true "
 				sh "rm -rf ./be-login"	
-				sh "docker build -f resources/Dockerfile-win  -t ${imageName}-win:${imageTag} ."
-                sh "docker run -d --name ${containerName}-win  ${imageName}-win:${imageTag}"
+				sh "docker build -f resources/Dockerfile-build  -t ${imageName}-build:${imageTag} ."
+                sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
             	}  
 	    	}
 			
 		stage('Transition stage') {
 			steps {
 				//copy files from the container to the job
-				sh "docker cp ${containerName}-win:/opt/app/dist  ./be-login"
+				sh "docker cp ${containerName}-build:/opt/app/dist  ./be-login"
 			}
 		}
 		
@@ -51,11 +51,12 @@ pipeline {
 	    stage('Deploy on windows server') {
 		  	steps{
 			  
-			   // sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login'
+			  sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login'
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
 				transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
 				
-				sh "echo you can access app by going to 10.95.0.178 machine and write http://be-login.fawry.com/  or http://be-login  in the web browser"
+			sh 'echo "go to 10.95.0.178 server and type http://10.95.0.178/be-login/ in the browser" '
+				
 			}
 		}
 	}
