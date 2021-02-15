@@ -11,14 +11,13 @@ spec:
   replicas: 1
   strategy:
     type: Recreate
-  revisionHistoryLimit: 1
   template:
     metadata:
       labels:
         name: be-login-ui-develop
     spec:
       containers:
-      - name: be-login-ui-develop
+      - name: be-login-ui-alpha
         image: node2:5000/be-login-ui-develop:BUILDID
         imagePullPolicy: Always
         ports:
