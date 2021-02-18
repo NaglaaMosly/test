@@ -55,7 +55,7 @@ pipeline {
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
 				transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
 				
-			sh 'echo "go to 10.95.0.178 server and type http://10.95.0.178/be-login/ in the browser" '
+			sh 'echo "you can access tha app from http://10.95.0.178/be-login/ " '
 				
 			}
 		}
