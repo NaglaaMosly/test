@@ -17,7 +17,7 @@ spec:
         name: be-login-ui-develop
     spec:
       containers:
-      - name: be-login-ui-alpha
+      - name: be-login-ui-develop
         image: node2:5000/be-login-ui-develop:BUILDID
         imagePullPolicy: Always
         ports:
