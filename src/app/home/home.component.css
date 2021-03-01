@@ -1,42 +1,95 @@
 
-.purpule-header{ background-color: #00587e}
-
-
-
-.example-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.example-container > * {
-  width: 100%;
-}
-
-.loginBtn{    margin: 0px 15px;}
-
-.avatar-img{width: 80px; height: 80px;    position: absolute;    background-color: #fff;
-  text-align: center;    border-radius: 150%;
-  margin: -52px auto 0px 37.5%; overflow: hidden}
-.avatar-img img{width:70px; height: 70px ;    box-shadow: 4px 0px 0px #fff;    margin-top: 3px;}
-
-.increaseMargin-top{ margin-top: 50px}
-
-.modal-content{ border: 0px !important;}
-
-
-.example-right-align {
-  text-align: right;
-}
-
-input.example-right-align::-webkit-outer-spin-button,
-input.example-right-align::-webkit-inner-spin-button {
-  display: none;
-}
-
-input.example-right-align {
-  -moz-appearance: textfield;
-}
-
-
-.mat-form-field {  font-size: 14px; margin-bottom: 7px}
-
+.home-header{ background: url('/assets/img/landing-page-header.jpg');
+	height: auto;background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover; min-height: 500px;}
+  
+  .header-titile span{ color: #ffd200;display: block;font-weight:normal;    font-size: 1.6em;; padding-left: 20px; margin-bottom: -20px}
+  .header-titile{ color: #f8f9fa; text-transform: uppercase; font-size:2.8em; font-weight: 600 ;   margin-top: 1em;margin-left: 1em;}
+  .sub-header-titile{ color:#f8f9fa; text-transform: uppercase;margin-left: 0.5em; }
+  .FAWRY-support{ margin-top: 4.5em;margin-left: 1.5em}
+  .FAWRY-support h4{  font-size: 3.3em ; }
+  .FAWRY-support p{  color: #3d3d3d }
+  .FAWRY-support h4 span{font-family: 'Varela Round', sans-serif; font-weight: 600; margin-left: 0px; padding-left: 0px; color: #00587e}
+  
+  .example-container {
+	display: flex;
+	flex-direction: column;
+  }
+  
+  .example-container > * {
+	width: 100%;
+  }
+  
+  .loginBtn{    margin: 0px 15px 0px 0px;}
+  
+  .avatar-img{width: 80px; height: 80px;    position: absolute;    background-color: #fff;
+	text-align: center;    border-radius: 150%;
+	margin: -52px auto 0px 37.5%; overflow: hidden}
+  .avatar-img img{width:70px; height: 70px ;    box-shadow: 4px 0px 0px #fff;    margin-top: 3px;}
+  
+  .increaseMargin-top{ margin-top: 50px}
+  
+  .modal-content{ border: 0px !important;}
+  
+  
+  .example-right-align {
+	text-align: right;
+  }
+  
+  input.example-right-align::-webkit-outer-spin-button,
+  input.example-right-align::-webkit-inner-spin-button {
+	display: none;
+  }
+  
+  input.example-right-align {
+	-moz-appearance: textfield;
+  }
+  
+  
+  .mat-form-field {  font-size: 14px; margin-bottom: 15px}
+  
+  .purpule-header{ background-color: #00587e}
+  
+  .alert-icon-section{ ; padding-right: 25px; line-height: 53px }
+  .alert-icon-section a{ color: rgba(255, 255, 255, 0.5); }
+  .alert-icon-section a:hover{ color: rgba(255, 255, 255, 1.1); }
+  .member-area-btn{background: no-repeat;  padding: 0px;  font-size: 15px; color: #fff;height: 47px;}
+  .member-area-btn .material-icons{ color: #ffd400;font-size: 35px;
+	display: inline-block;
+	line-height: 38px;
+	float: left;}
+  .member-area-btn .member-titile{display: inline-block;margin-left: 8px; text-align: left}
+  .member-area-btn .member-titile p{ margin-top: -7px;font-size: 13px;line-height: 24px;}
+  .member-area-btn .member-titile small{ color: #ffd400; font-size:11px !important}
+  .member-area-btn  i{margin-top: 4px;}
+  .member-dropdown{margin-right: 2em;}
+  .justify-font{font-size: 13.5px;}
+  
+  .link-withIco i{ float: left;  font-size: 22px;  color: rgba(0,0,0,0.3);  margin-right: 3px;}
+  
+  .link-withIco span{line-height: 25px;}
+  
+  .dropdown-menu button{ cursor: pointer}
+  
+  
+  
+  .navbar-toggler {padding: 0.25rem 0.35rem;  font-size: 1.10rem;}
+  
+  .navbar{padding: 0.5rem 0.00rem;}
+  .navbar-btn{color: rgba(255, 255, 255, 0.5);  border-color: rgba(255, 255, 255, 0.1); background-color: transparent;
+	padding: 0px 6px;  line-height: 22px;}
+  
+  .navbar-btn:hover{color: rgba(255, 255, 255, 0.9);}
+  
+  
+  .navbar-btn i{ line-height: 33px}
+  
+  .lang-ico{ line-height: 45px}
+  
+  .navbar-brand{ padding-top: 0em !important;}
+  
+  .custom-align{ position: absolute; margin-left: 5px}
+  
+  .navbar-toggler:hover{ background-color: rgba(0,0,0,0.2) !important; color: #fff  !important}
+  
