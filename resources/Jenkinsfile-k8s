@@ -1,9 +1,6 @@
 pipeline {
 
 	agent any
-    environment {
-        def btime="${BUILD_TIMESTAMP}"
-     }
 	
 	stages {
 		  
@@ -29,8 +26,7 @@ pipeline {
 
 	    stage('Build stage') {
         		steps {
-				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true"
-				sh "docker rmi ${imageName}-build:${imageTag} || true"
+				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true && docker rmi ${imageName}-build:${imageTag} || true"
 				sh "rm -rf ./dist"	
 				sh "docker build -f resources/Dockerfile-build  -t ${imageName}-build:${imageTag} ."
                 sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
@@ -41,7 +37,7 @@ pipeline {
 			steps {
 				//copy files from the container to the job
 				sh "docker cp ${containerName}-build:/opt/app/dist  ."
-				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true"
+				sh "docker stop ${containerName}-build"
 			}
 		}
 			
@@ -73,14 +69,12 @@ pipeline {
 				
 					//Set env variables
 					sh "sed -i.bak 's#BUILDID#${env.BUILD_ID}#'                   resources/deployment.yaml"
-					sh "sed -i 's/THIS_STRING_IS_REPLACED_DURING_BUILD/$btime/g'  resources/deployment.yaml"
-					sh "cat   resources/deployment.yaml"
 					
 				    sh ("kubectl apply -f resources/ns.yaml")
 					sh ("kubectl apply -f resources/svc.yaml")
 					sh ("kubectl apply -f resources/deployment.yaml")
 					
-					sh "echo you can access app by visiting http://10.95.0.182:30818"
+					sh "echo you can access app by visiting http://10.95.0.182:30817"
 			}	
 		}
 	}

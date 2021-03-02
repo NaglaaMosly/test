@@ -2,32 +2,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: be-login-ui-alpha
+    name: be-login-ui-develop
     namespace: fawry-user-app
 spec:
   selector:
     matchLabels:
-      name: be-login-ui-alpha
-  replicas: 1
+      name: be-login-ui-develop
   strategy:
     type: Recreate
-  revisionHistoryLimit: 1
   template:
     metadata:
       labels:
-        name: be-login-ui-alpha
+        name: be-login-ui-develop
     spec:
       containers:
-      - name: be-login-ui-alpha
-        image: node2:5000/be-login-ui-alpha:BUILDID
+      - name: be-login-ui-develop
+        image: node2:5000/be-login-ui-develop:BUILDID
         imagePullPolicy: Always
         ports:
         - containerPort: 80
           name: https
         env:
-        - name: FOR_GODS_SAKE_PLEASE_REDEPLOY
-          value: 'THIS_STRING_IS_REPLACED_DURING_BUILD'
         - name: BUILD_ENV
-          value: "alpha"
+          value: "develop"
         - name: BUILD_ID
           value: 'BUILDID'

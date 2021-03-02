@@ -1,19 +1,19 @@
-import { ResponseEntity } from './../api/model/responseEntity';
-import { Constants } from './../shared/constants';
-import { ApplicationModel } from './../api/model/applicationModel';
-import { tap } from 'rxjs/operators';
-import { AuthResourceService } from './../api/service/authResource.service';
-import { LoginRequest } from './../api/model/loginRequest';
-import { LoginResponse } from './../api/model/loginResponse';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { ChangePasswordRequest } from '../api/model/changePasswordRequest';
 import CookieUtil from '../shared/CookieUtil';
 import TokenUtil from '../shared/TokenUtil';
-import { ChangePasswordRequest } from '../api/model/changePasswordRequest';
+import { ApplicationModel } from './../api/model/applicationModel';
+import { LoginRequest } from './../api/model/loginRequest';
+import { LoginResponse } from './../api/model/loginResponse';
+import { ResponseEntity } from './../api/model/responseEntity';
+import { AuthResourceService } from './../api/service/authResource.service';
+import { Constants } from './../shared/constants';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class AuthService {
 
@@ -30,7 +30,7 @@ export class AuthService {
 		}
 		return this.authResourceService.login(loginRequest).pipe(
 			tap((response: LoginResponse) => {
-				if (!response.mustChangePassword){
+				if (!response.mustChangePassword) {
 					this.saveLoginData(response);
 					this.loadAccessibleApplications();
 				}
@@ -44,7 +44,7 @@ export class AuthService {
 		localStorage.removeItem(Constants.LOGGED_IN_USER);
 		CookieUtil.remove(Constants.TOKEN);
 		CookieUtil.remove(Constants.REFRESH_TOKEN);
-		this.router.navigateByUrl("/");
+		this.router.navigateByUrl("/auth/login");
 	}
 
 	changePassword(changePasswordRequest: ChangePasswordRequest): Observable<ResponseEntity> {
@@ -58,6 +58,7 @@ export class AuthService {
 	saveLoginData(loginResponse: LoginResponse) {
 		console.log('saveLoginData', loginResponse, TokenUtil.parse(loginResponse.token));
 		this.decodedToken = TokenUtil.parse(loginResponse.token);
+		localStorage.setItem(Constants.TOKEN, loginResponse.token);
 		this.shareTokenIntoCookie(Constants.TOKEN, loginResponse.token);
 		this.shareTokenIntoCookie(Constants.REFRESH_TOKEN, loginResponse.refreshToken);
 	}
@@ -86,7 +87,7 @@ export class AuthService {
 		if (this.decodedToken == null) {
 			const token = this.getToken();
 			if (token) {
-			this.decodedToken = TokenUtil.parse(token);
+				this.decodedToken = TokenUtil.parse(token);
 			}
 		}
 		return this.decodedToken;
@@ -132,7 +133,7 @@ export class AuthService {
 		} else {
 			loginRedirectionsWindow = Date.now().toString();
 		}
-		
+
 		CookieUtil.set('lrw', loginRedirectionsWindow);
 		return allowRedirection;
 	}

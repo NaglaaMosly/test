@@ -3,8 +3,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    name: be-login-ui-alpha
-  name: be-login-ui-alpha
+    name: be-login-ui-develop
+  name: be-login-ui-develop
   namespace: fawry-user-app
 spec:
   type: NodePort
@@ -13,6 +13,6 @@ spec:
       name: http
       port: 80
       targetPort: 80
-      nodePort: 30818
+      nodePort: 30817
   selector:
-    name: be-login-ui-alpha
+    name: be-login-ui-develop

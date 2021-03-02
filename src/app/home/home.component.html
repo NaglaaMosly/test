@@ -1,52 +1,88 @@
 <div class="purpule-header">
-    <div class="container-fluid">
-  
-    <div class="row">
-    <div class="col-12">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
-    <a class="navbar-brand" ><img src="assets/img/fawry-digital-logo.svg" alt="fawry-logo"></a>
-  
-      <!-- <a id="loginBtnLink" class="nav-link loginBtn web-view" href="#" role="button" data-toggle="modal" data-target="#login" translate>login</a> -->
-  
-      <button class="navbar-toggler align-self-end custom-align" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+	<div class="container-fluid">
 
-  
-      <div class="form-inline my-2 my-lg-0">
-  
-  
-  
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-          <li class="nav-item">
-            <span class="nav-link">{{loggedInUserName}}</span>
-          </li>
-  
-          <li *ngFor="let app of accessibleApplications" class="nav-item">
-            <a id="app" class="nav-link" [href]="app.url" role="button" >{{ app | translateName}}</a>
-          </li>
-          
-          <li class="nav-item mobile-view ">
-            <a id="loginBtnLink" *ngIf="!isLoggedIn()" class="nav-link loginBtn" routerLink="/auth/login" translate>login</a>
-            <a id="logoutBtnLink" *ngIf="isLoggedIn()" class="nav-link loginBtn" href (click)="logout()" translate>logout</a>
-          </li>
-  
-          <li><button id="changeLngLink" type="button" class="btn btn-warning btn-sm mt-2 pt-1" (click)="changeLocal()">{{'negative-local-key' | translate}}</button></li>
-        </ul>
-  
-  
-      </div>
-    </div>
-  
-  
-  
-    </nav>
-  
-    </div>
-    </div>
-  
-  
-  
-    </div>
-    </div>
+		<div class="row">
+
+			<div class="col-12">
+
+				<div class="container-fluid">
+
+
+					<nav class="navbar navbar-expand-lg navbar-dark ">
+						<div class="row  ">
+
+							<div class="col align-self-center"><a class="navbar-brand" href="#"><img
+										src="assets/img/fawry-digital-logo.svg" class="img-fluid" alt="FAWRY Pay"></a>
+							</div>
+
+							<div class="col-auto align-self-center">
+								<button class="navbar-toggler align-self-end custom-align" type="button"
+									data-toggle="collapse" data-target="#navbarNavDropdown"
+									aria-controls="navbarNavDropdown" aria-expanded="false"
+									aria-label="Toggle navigation">
+									<span class="navbar-toggler-icon"></span>
+								</button>
+							</div>
+
+
+						</div>
+
+
+						<div class="collapse navbar-collapse" id="navbarNavDropdown">
+							<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+
+								<li class="nav-item ">
+
+								</li>
+
+							</ul>
+
+							<div class="form-inline my-2 my-lg-0">
+								<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+									<li class="nav-item ">
+										<div class="dropdown member-dropdown">
+											<button id="headerMenuBtn" class="btn  dropdown-toggle member-area-btn"
+												[matMenuTriggerFor]="options" type="button" id="dropdownMenu2"
+												data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+												<i class="material-icons">
+													assignment_ind
+												</i>
+												<span class="member-titile"> <small translate>{{'welcome' |
+														translate}}</small>
+													<p>{{loggedInUserName}}</p>
+												</span>
+											</button>
+										</div>
+									</li>
+
+									<li class="lang-ico"><button type="button" class="btn btn-warning btn-sm"
+											(click)="changeLocal()">{{'negative-local-key' | translate}}</button></li>
+								</ul>
+
+								<div class="dropdown-menu  dropdown-menu-right justify-font"
+									aria-labelledby="dropdownMenu2">
+									<mat-menu #options="matMenu">
+										<button mat-menu-item [matMenuTriggerFor]="appsMenu"
+											*ngIf="accessibleApplications && accessibleApplications.length > 0">{{'applications'
+											| translate}}</button>
+										<button mat-menu-item type="button" id="signOutBtn" (click)="logout()">
+											<span translate>logout</span></button>
+									</mat-menu>
+
+									<mat-menu #appsMenu="matMenu">
+										<a *ngFor="let app of accessibleApplications" [href]="app.url"><button
+												mat-menu-item>{{ app | translateName}}</button></a>
+									</mat-menu>
+								</div>
+
+							</div>
+
+
+						</div>
+					</nav>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
