@@ -32,7 +32,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: (http: HttpClient) => new TranslateHttpLoader(http, './assets/i18n/'),
         deps: [HttpClient]
       },
       defaultLanguage: 'en'
