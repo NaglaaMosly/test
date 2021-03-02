@@ -1,6 +1,4 @@
 app_profile = 'production'
-//imageName = 'be-login-ui-${GIT_LOCAL_BRANCH}'
-imageName = 'be-login-ui-alpha'
+imageName = 'be-login-ui-${GIT_LOCAL_BRANCH}'
 imageTag = 'latest'
-//containerName = 'be-login-ui-${GIT_LOCAL_BRANCH}'
-containerName = 'be-login-ui-alpha'
+containerName = 'be-login-ui-${GIT_LOCAL_BRANCH}'
