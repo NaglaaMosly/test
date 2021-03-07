@@ -9,24 +9,17 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { PartnerModel } from './partnerModel';
 import { UserRoleModel } from './userRoleModel';
-import {BranchModel} from "./branchModel";
-import {BiCredentialsModel} from "./BiCredentialsModel";
-
 
 export interface UserModel {
     email?: string;
     id?: number;
     mobileNumber?: string;
-    partner?: PartnerModel;
     role?: UserRoleModel;
     status?: UserModel.StatusEnum;
-    active?: boolean;
-    branch?: BranchModel;
-    biCredentialsModel?: BiCredentialsModel;
     roles?: UserRoleModel[];
 }
+
 export namespace UserModel {
     export type StatusEnum = 'ACTIVE' | 'INACTIVE' | 'BLOCKED';
     export const StatusEnum = {
