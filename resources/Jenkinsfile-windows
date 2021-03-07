@@ -28,7 +28,7 @@ pipeline {
 	    stage('Build stage') {
         		steps {
 				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true && docker rmi ${imageName}-build:${imageTag} || true "
-				sh "rm -rf ./be-login"	
+				sh "rm -rf ./be-login  ./be-login*.gz "	
 				sh "docker build -f resources/Dockerfile-win  -t ${imageName}-build:${imageTag} ."
                 sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
             	}  
@@ -57,12 +57,14 @@ pipeline {
            		}*/
 				   
 					sh "cp resources/.htaccess   ./be-login"
+					sh 'tar -czvf  be-login-"$(date +"%d-%m-%Y")".tar.gz  be-login'
+					
 			 	 	sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login'
 			  
 					sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
-				    transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
-				
-					sh 'ssh Administrator@10.95.0.178  powershell.exe  Compress-Archive -Path C:/Apache24/htdocs/be-login -DestinationPath C:/Apache24/htdocs/archive-ui/be-login-$(get-date -f yyyy-MM-dd).zip '
+				    transfers: [sshTransfer( sourceFiles: 'be-login/**')])], \
+					transfers: [sshTransfer(remoteDirectory: 'archive-ui', \
+					sourceFiles: 'be-login-"$(date +"%d-%m-%Y")".tar.gz')])])
 				
 				
 					sh 'echo "you can access tha app from http://10.95.0.178/be-login/ " '
