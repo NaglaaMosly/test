@@ -62,9 +62,8 @@ pipeline {
 			 	 	sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login'
 			  
 					sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
-				    transfers: [sshTransfer( sourceFiles: 'be-login/**')])], \
-					transfers: [sshTransfer(remoteDirectory: 'archive-ui', \
-					sourceFiles: 'be-login-"$(date +"%d-%m-%Y")".tar.gz')])])
+				    transfers: [sshTransfer( sourceFiles: 'be-login/**')], \
+					transfers: [sshTransfer(remoteDirectory: 'archive-ui', sourceFiles: 'be-login-"$(date +"%d-%m-%Y")".tar.gz')])])
 				
 				
 					sh 'echo "you can access tha app from http://10.95.0.178/be-login/ " '
