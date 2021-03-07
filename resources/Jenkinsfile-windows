@@ -58,6 +58,10 @@ pipeline {
 			
 	    stage('Deploy on windows server') {
 		  	steps{
+			  	script {
+                	timeout(time: 1, unit: 'MINUTES') {
+                     input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy') }
+           			}
 					sh "cp resources/.htaccess   ./be-login"
 			 	 	sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login'
 			  
