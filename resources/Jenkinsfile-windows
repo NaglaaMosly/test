@@ -48,15 +48,26 @@ pipeline {
                 }
             }
 			
+		stage('Asking before Deploy') {
+        	steps {
+		    	script {
+                     timeout(time: 1, unit: 'MINUTES') {
+                     input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy')
+              }
+            }
+			
 	    stage('Deploy on windows server') {
 		  	steps{
-			  sh "cp resources/.htaccess   ./be-login"
+					sh "cp resources/.htaccess   ./be-login"
+			 	 	sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login'
 			  
-			  sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login'
-				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
-				transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
+					sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
+					transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
 				
-			sh 'echo "you can access tha app from http://10.95.0.178/be-login/ " '
+					sh 'ssh Administrator@10.95.0.178  powershell.exe  Compress-Archive -Path C:/Apache24/htdocs/be-login -DestinationPath C:/Apache24/htdocs/archive-ui/be-login-$(get-date -f yyyy-MM-dd).zip'
+				
+				
+					sh 'echo "you can access tha app from http://10.95.0.178/be-login/ " '
 				
 			}
 		}
