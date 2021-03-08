@@ -25,13 +25,13 @@ pipeline {
 		}
 
 		stage('Build stage') {
-        		steps {
+        	steps {
 				sh "docker stop ${containerName} || true && docker rm ${containerName} || true && docker rmi ${imageName}:${imageTag} || true "
 				sh "rm -rf ./be-login  ./be-login*.gz "	
 				sh "docker build -f resources/Dockerfile-win  -t ${imageName}:${imageTag} ."
-                		sh "docker run -d --name ${containerName}  ${imageName}:${imageTag}"
-            		}  
-	    	}
+                sh "docker run -d --name ${containerName}  ${imageName}:${imageTag}"
+            }  
+		}	    	
 			
 		stage('Transition stage') {
 			steps {
@@ -41,11 +41,11 @@ pipeline {
 		}
 		
 		stage('Archive') {
-            		steps {
-                    		sh 'tar -cvzf  be-login.tar.gz  --strip-components=1  be-login/*'
-                    		archiveArtifacts artifacts: 'be-login.tar.gz'
-                	}
-            	}
+            steps {
+            	sh 'tar -cvzf  be-login.tar.gz  --strip-components=1  be-login/*'
+                archiveArtifacts artifacts: 'be-login.tar.gz'
+           }
+		}
 			
 		stage('Deploy on windows server') {
 		  	steps{
@@ -53,7 +53,7 @@ pipeline {
 			//confirmation
 			 /*script {
                 	timeout(time: 2, unit: 'MINUTES') {
-                        input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy') }
+                    input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy') }
            		}*/
 
 				sh "cp -r be-login.tar.gz    be-login@${PROJECT_VERSION}.tar.gz "
@@ -63,7 +63,7 @@ pipeline {
 					 
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
 				transfers: [sshTransfer( remoteDirectory: 'archive-ui/be-login/', \
-					                 sourceFiles: 'be-login@*.gz/**')])])
+						                 sourceFiles: 'be-login@*.gz/**')])])
 				
 				sh 'echo "you can access tha app from http://10.95.0.178/be-login/ " '
 			}
