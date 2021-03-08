@@ -1,7 +1,11 @@
 pipeline {
 
 	agent any
-	 	
+	
+	environment {
+	 	PROJECT_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-7 ", returnStdout: true).trim()}"
+		}
+		
 	stages {
 		  
 		stage('Load env variables') {
@@ -9,66 +13,59 @@ pipeline {
 				sh 'printenv';
 				
 			script {
-					//load("./${GIT_LOCAL_BRANCH}-properties")
-					load("./alpha-properties")
+					load("./${GIT_LOCAL_BRANCH}-properties")
 				  }
 				sh "echo imageTag: ${imageTag}"
 				sh "echo imageName: ${imageName}"
 				sh "echo containerName: ${containerName}"
-				sh "echo app_profile: ${app_profile}"	
+				sh "echo app_profile: ${app_profile}"
+					
+				sh ("sed -i.bak 's#app_profile#${app_profile}#g'  resources/Dockerfile-win")
 		    }
 		}
-		
-	    stage('Set env variables') {
-			steps {
-                  sh ("sed -i.bak 's#app_profile#${app_profile}#g'  resources/Dockerfile-win")
-				}
-			}
 
-	    stage('Build stage') {
+		stage('Build stage') {
         		steps {
-				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true && docker rmi ${imageName}-build:${imageTag} || true "
+				sh "docker stop ${containerName} || true && docker rm ${containerName} || true && docker rmi ${imageName}:${imageTag} || true "
 				sh "rm -rf ./be-login  ./be-login*.gz "	
-				sh "docker build -f resources/Dockerfile-win  -t ${imageName}-build:${imageTag} ."
-                sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
-            	}  
+				sh "docker build -f resources/Dockerfile-win  -t ${imageName}:${imageTag} ."
+                		sh "docker run -d --name ${containerName}  ${imageName}:${imageTag}"
+            		}  
 	    	}
 			
 		stage('Transition stage') {
 			steps {
 				//copy files from the container to the job
-				sh "docker cp ${containerName}-build:/opt/app/dist  ./be-login"
+				sh "docker cp ${containerName}:/opt/app/dist  ./be-login"
 			}
 		}
 		
 		stage('Archive') {
-            steps {
-                    sh 'tar -cvzf be-login.tar.gz --strip-components=1  ./be-login'
-                    archiveArtifacts 'be-login.tar.gz'
-                }
-            }
+            		steps {
+                    		sh 'tar -cvzf  be-login.tar.gz  --strip-components=1  be-login/*'
+                    		archiveArtifacts artifacts: 'be-login.tar.gz'
+                	}
+            	}
 			
-			
-	    stage('Deploy on windows server') {
+		stage('Deploy on windows server') {
 		  	steps{
-			 /* 	script {
-                	timeout(time: 1, unit: 'MINUTES') {
-                     input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy') }
-           		}*/
-				   
-					sh "cp resources/.htaccess   ./be-login"
-					sh 'tar -czvf  be-login-"$(date +"%d-%m-%Y")".tar.gz  be-login'
-					
-			 	 	sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login'
 			  
-				     sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
-				     transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
+			//confirmation
+			 /*script {
+                	timeout(time: 2, unit: 'MINUTES') {
+                        input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy') }
+           		}*/
+
+				sh "cp -r be-login.tar.gz    be-login@${PROJECT_VERSION}.tar.gz "
+					   
+				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
+				transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
 					 
-					 sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
-				     transfers: [sshTransfer( remoteDirectory: 'archive-ui', sourceFiles: 'be-login-"$(date +"%d-%m-%Y")".tar.gz/**')])])
+				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
+				transfers: [sshTransfer( remoteDirectory: 'archive-ui/be-login/', \
+					                 sourceFiles: 'be-login@*.gz/**')])])
 				
-					sh 'echo "you can access tha app from http://10.95.0.178/be-login/ " '
-				
+				sh 'echo "you can access tha app from http://10.95.0.178/be-login/ " '
 			}
 		}
 	}
