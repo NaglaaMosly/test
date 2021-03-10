@@ -6,10 +6,3 @@ RUN npm cache clean --force
 #RUN npm  --registry http://10.95.0.75:8089/repository/npm-proxy/ --verbose install --no-package-lock
 RUN npm  --registry http://10.95.0.2:8081/repository/npm-proxy/ --verbose install --no-package-lock
 RUN node_modules/.bin/ng build --prod --configuration=app_profile --output-path=/opt/app/dist
-
-WORKDIR /opt/app/dist/
-COPY package.json /opt/app/dist/
-RUN ls .
-RUN npm set registry "http://10.95.0.2:8081/repository/npm-private/"
-RUN npm set //10.95.0.2:8081/repository/npm-private/:_auth=YWRtaW46UEBzc3cwcmQ=
-RUN npm publish
