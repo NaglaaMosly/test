@@ -1,7 +1,11 @@
 pipeline {
 
 	agent any
-	 	
+	
+	environment {
+	 	PROJECT_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-7 ", returnStdout: true).trim()}"
+		}
+		
 	stages {
 		  
 		stage('Load env variables') {
@@ -9,56 +13,107 @@ pipeline {
 				sh 'printenv';
 				
 			script {
-					//load("./${GIT_LOCAL_BRANCH}-properties")
-					load("./alpha-properties")
+					//load("./alpha-properties")
+					load("./${GIT_LOCAL_BRANCH}-properties")
 				  }
 				sh "echo imageTag: ${imageTag}"
 				sh "echo imageName: ${imageName}"
 				sh "echo containerName: ${containerName}"
-				sh "echo app_profile: ${app_profile}"	
+				sh "echo app_profile: ${app_profile}"
+					
+				sh ("sed -i.bak 's#app_profile#${app_profile}#g'  resources/Dockerfile-win")
 		    }
 		}
 		
-	    stage('Set env variables') {
-			steps {
-                  sh ("sed -i.bak 's#app_profile#${app_profile}#g'  resources/Dockerfile-win")
-				}
-			}
+	    stage("Interactive_Input") {
+				
+       		steps {
+                script {
+            		// Define Variable
+             		def USER_INPUT = input(
+                    	message: "The Current version of app is : ${env.PROJECT_VERSION} \n Please enter the Version U want to deploy with :",
+                    	parameters: [
+                            string(defaultValue: "${env.PROJECT_VERSION}",
+                             	   name: 'input',
+                                   description: 'Project Version'),
+                    ])
+					
+            		echo "The answer is: ${USER_INPUT}"
+					
+					sh "sed -i '3s#${PROJECT_VERSION}#${USER_INPUT}#'  package.json"
+					
+					if ( env.PROJECT_VERSION == "${USER_INPUT}" ) {
+					
+						echo "No push happened as the version is the same"	
+						
+                    } else  {
+					
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'd0179fa2-7140-4aaf-86bc-518d5b7cb899',
+                            		  usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+									  
+						sh 'git config --global user.email "naglaa.reda@fawry.com" '
+						sh 'git config --global user.name "Naglaa Reda" '
+						sh "git add ."
+						sh 'git commit -m  "New project version" '
+						sh "git push  http://${env.USERNAME}:${env.PASSWORD}@10.96.0.227:8080/tfs/DefaultCollection/consumer/_git/be-login-ui"
+						}
+                    }
+               	 }
+            }
+        }
 
-	    stage('Build stage') {
-        		steps {
-				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true && docker rmi ${imageName}-build:${imageTag} || true "
-				sh "rm -rf ./be-login"	
-				sh "docker build -f resources/Dockerfile-win  -t ${imageName}-build:${imageTag} ."
-                sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
-            	}  
-	    	}
+		stage('Build stage') {
+        	steps {
+				sh "docker stop ${containerName} || true && docker rm ${containerName} || true && docker rmi ${imageName}:${imageTag} || true "
+				sh "rm -rf ./be-login  ./be-login*.gz "	
+				sh "docker build -f resources/Dockerfile-win  -t ${imageName}:${imageTag} ."
+                sh "docker run -d --name ${containerName}  ${imageName}:${imageTag}"
+            }  
+		}	    	
 			
 		stage('Transition stage') {
 			steps {
 				//copy files from the container to the job
-				sh "docker cp ${containerName}-build:/opt/app/dist  ./be-login"
+				sh "docker cp ${containerName}:/opt/app/dist  ./be-login"
 			}
 		}
 		
 		stage('Archive') {
             steps {
-                    sh 'tar -cvzf be-login.tar.gz --strip-components=1  ./be-login'
-                    archiveArtifacts 'be-login.tar.gz'
-                }
-            }
+				sh "cp resources/.htaccess   be-login"
+            	sh 'tar -cvzf  be-login.tar.gz  --strip-components=1  be-login/*'
+                archiveArtifacts artifacts: 'be-login.tar.gz'
+           }
+		}
 			
-	    stage('Deploy on windows server') {
+		stage('Deploy on windows server') {
+	    	environment {
+	 			NEW_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-7 ", returnStdout: true).trim()}"
+			}
+			
 		  	steps{
-			  sh "cp resources/.htaccess   ./be-login"
+				sh "echo ${NEW_VERSION}"
 			  
-			  sh 'ssh Administrator@10.95.0.178  powershell.exe  rm -r  C:/Apache24/htdocs/be-login'
+			//confirmation
+			script {
+                	timeout(time: 5, unit: 'MINUTES') {
+                    input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy') }
+           		}
+
+				sh "cp -r be-login.tar.gz    be-login@${NEW_VERSION}.tar.gz "
+					   
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
 				transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
+					 
+				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
+				transfers: [sshTransfer( remoteDirectory: 'archive-ui/be-login/', \
+						                 sourceFiles: 'be-login@*.gz/**')])])
 				
-			sh 'echo "you can access tha app from http://10.95.0.178/be-login/ " '
+				sh 'ssh Administrator@10.95.0.178  powershell.exe  ls C:/Apache24/htdocs/archive-ui/be-login'
 				
+				sh 'echo "you can access tha app from http://10.95.0.178/be-login/ " '
 			}
 		}
 	}
 }
+
