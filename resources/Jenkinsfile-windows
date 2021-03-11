@@ -58,6 +58,9 @@ pipeline {
 						sh "git push http://${env.USERNAME}:${env.PASSWORD}@10.96.0.227:8080/tfs/DefaultCollection/consumer/_git/be-login-ui"
 						}
                     }
+					//changing build name
+					currentBuild.displayName = "V${USER_INPUT}"
+                    currentBuild.description = "#${BUILD_NUMBER} (V${USER_INPUT})"
                	 }
             }
         }
