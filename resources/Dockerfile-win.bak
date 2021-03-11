@@ -4,7 +4,7 @@ RUN rm -rf /opt/app
 COPY . /opt/app/
 RUN npm cache clean --force
 RUN npm  --registry http://10.95.0.75:8089/repository/npm-proxy/ --verbose install --no-package-lock
-RUN node_modules/.bin/ng build --prod --configuration=production --output-path=/opt/app/dist  --base-href /be-login/
+RUN node_modules/.bin/ng build --prod --configuration=app_profile --output-path=/opt/app/dist  --base-href /be-login/
 
 WORKDIR /opt/app/dist/
 COPY package.json /opt/app/dist/
