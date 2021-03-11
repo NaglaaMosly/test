@@ -53,9 +53,9 @@ pipeline {
 									  
 						sh 'git config --global user.email "naglaa.reda@fawry.com" '
 						sh 'git config --global user.name "Naglaa Reda" '
-						sh "git add ."
+						sh "git add package.json"
 						sh 'git commit -m  "New project version" '
-						sh "git push  http://${env.USERNAME}:${env.PASSWORD}@10.96.0.227:8080/tfs/DefaultCollection/consumer/_git/be-login-ui"
+						sh "git push  -f alpha http://${env.USERNAME}:${env.PASSWORD}@10.96.0.227:8080/tfs/DefaultCollection/consumer/_git/be-login-ui"
 						}
                     }
                	 }
