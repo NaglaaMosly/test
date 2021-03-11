@@ -13,8 +13,8 @@ pipeline {
 				sh 'printenv';
 				
 			script {
-					//load("./alpha-properties")
 					load("./${GIT_LOCAL_BRANCH}-properties")
+					//load("./alpha-properties")
 				  }
 				sh "echo imageTag: ${imageTag}"
 				sh "echo imageName: ${imageName}"
@@ -55,12 +55,13 @@ pipeline {
 						sh 'git config --global user.name "Naglaa Reda" '
 						sh "git add package.json"
 						sh 'git commit -m  "New project version" '
-						sh "git push -f origin alpha http://${env.USERNAME}:${env.PASSWORD}@10.96.0.227:8080/tfs/DefaultCollection/consumer/_git/be-login-ui"
+						sh "git push  http://${env.USERNAME}:${env.PASSWORD}@10.96.0.227:8080/tfs/DefaultCollection/consumer/_git/be-login-ui"
 						}
                     }
                	 }
             }
         }
+
 
 		stage('Build stage') {
         	steps {
@@ -97,7 +98,7 @@ pipeline {
 			//confirmation
 			script {
                 	timeout(time: 5, unit: 'MINUTES') {
-                    input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy') }
+                    input(id: "Deploy Gate", message: "Deploying to testing machine", ok: 'Deploy') }
            		}
 
 				sh "cp -r be-login.tar.gz    be-login@${NEW_VERSION}.tar.gz "
