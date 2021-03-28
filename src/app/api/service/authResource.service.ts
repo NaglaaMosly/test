@@ -1,8 +1,7 @@
-import { ApiModule } from './../api.module';
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/index';
-import { ApiClient } from "../apiClient";
+import { Observable } from 'rxjs';
+import { ApiClient } from '../apiClient';
 import { CustomHttpUrlEncodingCodec } from '../encoder';
 import { ApplicationModel } from '../model/applicationModel';
 import { ChangePasswordRequest } from '../model/changePasswordRequest';
@@ -10,8 +9,8 @@ import { LoginRequest } from '../model/loginRequest';
 import { LoginResponse } from '../model/loginResponse';
 import { ResetPasswordRequest } from '../model/resetPasswordRequest';
 import { ResponseEntity } from '../model/responseEntity';
-import { VerifyForgetPasswordRequest } from "../model/VerifyForgetPasswordRequest";
-import { environment } from './../../../environments/environment';
+import { VerifyForgetPasswordRequest } from '../model/VerifyForgetPasswordRequest';
+import { environment } from '../../../environments/environment';
 
 
 
@@ -35,7 +34,7 @@ export class AuthResourceService {
       return this.apiClient.postRequest<LoginResponse>(`${environment.userApiBaseUrl}/auth/login`, loginRequest);
     }
 
-    public refreshToken(token: string): Observable<Object> {
+    public refreshToken(token: string): Observable<object> {
       const params = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()})
          .set('token', token);
 
@@ -47,15 +46,12 @@ export class AuthResourceService {
     }
 
     public verifyResetPassword(verifyForgetPasswordRequest: VerifyForgetPasswordRequest): Observable<ResponseEntity> {
-      return this.apiClient.postRequest<ResponseEntity>(`${environment.userApiBaseUrl}/auth/password/reset/verify`, verifyForgetPasswordRequest);
+      return this.apiClient.postRequest<ResponseEntity>(`${environment.userApiBaseUrl}/auth/password/reset/verify`,
+        verifyForgetPasswordRequest);
     }
 
-    public findApplicationsByCodes(codes: string[]): Observable<ApplicationModel[]> {
-      let params = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-      codes.forEach(code => {
-        params = params.append('code', code);
-      })
-      return this.apiClient.getRequest<ApplicationModel[]>(`${environment.userApiBaseUrl}/applications`, params);
+    public findAccessibleApplications(): Observable<ApplicationModel[]> {
+      return this.apiClient.getRequest<ApplicationModel[]>(`${environment.userApiBaseUrl}/auth/applications`);
     }
 
 }
