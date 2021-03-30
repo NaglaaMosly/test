@@ -48,7 +48,7 @@ pipeline {
 						
                     } else  {
 					
-					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'd0179fa2-7140-4aaf-86bc-518d5b7cb899',
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'naglaa-cred',
                             		  usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 									  
 						sh 'git config --global user.email "naglaa.reda@fawry.com" '
