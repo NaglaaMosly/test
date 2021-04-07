@@ -13,8 +13,8 @@ pipeline {
 				sh 'printenv';
 				
 			script {
-					//load("./alpha-properties")
-					load("./${GIT_LOCAL_BRANCH}-properties")
+					//load("./${GIT_LOCAL_BRANCH}-properties")
+					load("./alpha-properties")
 				  }
 				sh "echo imageTag: ${imageTag}"
 				sh "echo imageName: ${imageName}"
@@ -48,19 +48,24 @@ pipeline {
 						
                     } else  {
 					
-					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'd0179fa2-7140-4aaf-86bc-518d5b7cb899',
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'naglaa-cred',
                             		  usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 									  
 						sh 'git config --global user.email "naglaa.reda@fawry.com" '
 						sh 'git config --global user.name "Naglaa Reda" '
-						sh "git add ."
+						sh 'git checkout alpha'
+						sh "git add package.json"
 						sh 'git commit -m  "New project version" '
-						sh "git push  http://${env.USERNAME}:${env.PASSWORD}@10.96.0.227:8080/tfs/DefaultCollection/consumer/_git/be-login-ui"
+						sh "git push http://${env.USERNAME}:${env.PASSWORD}@10.96.0.227:8080/tfs/DefaultCollection/consumer/_git/be-login-ui"
 						}
                     }
+					//changing build name
+					currentBuild.displayName = "V${USER_INPUT}"
+                    currentBuild.description = "#${BUILD_NUMBER} (V${USER_INPUT})"
                	 }
             }
         }
+
 
 		stage('Build stage') {
         	steps {
@@ -97,7 +102,7 @@ pipeline {
 			//confirmation
 			script {
                 	timeout(time: 5, unit: 'MINUTES') {
-                    input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy') }
+                    input(id: "Deploy Gate", message: "Deploying to testing machine", ok: 'Deploy') }
            		}
 
 				sh "cp -r be-login.tar.gz    be-login@${NEW_VERSION}.tar.gz "
