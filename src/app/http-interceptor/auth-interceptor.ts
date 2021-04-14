@@ -38,6 +38,10 @@ export class AuthInterceptor implements HttpInterceptor {
       return this.refreshToken(req, next);
     }
 
+    if (error.error && error.error.errorCode === Constants.INVALID_REFRESH_TOKEN) {
+      this.authService.logout();
+    }
+
     switch (true) {
       case error.error != null && error.error.messageEn != null:
         this.notificationService.notifyError(currentLang === 'en' ? error.error.messageEn : error.error.messageAr);
@@ -54,13 +58,12 @@ export class AuthInterceptor implements HttpInterceptor {
             "General error, please contact us on myFawry@fawry.com or by calling 16421" :
             "خطأ عام, برجاء التواصل معنا من خلال myFawry@fawry.com أو بالإتصال على 16421");
     }
-    error.error.statusCode === Constants.TOKEN_REFRESH_TIME_EXPIRED && this.logout();
     return throwError(error);
   }
 
   refreshToken(req, next) {
     return this.authService.refreshToken()
-      .pipe(switchMap((r: any) => {
+      .pipe(switchMap((r) => {
           this.authService.changeToken(r.token);
           return next.handle(this.addAuthToken(req))
             .pipe(catchError((error) => this.handelError(error, req, next)));
@@ -68,7 +71,4 @@ export class AuthInterceptor implements HttpInterceptor {
       );
   }
 
-  logout() {
-    this.authService.logout();
-  }
 }

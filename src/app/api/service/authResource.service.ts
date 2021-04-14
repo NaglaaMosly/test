@@ -35,11 +35,8 @@ export class AuthResourceService {
       return this.apiClient.postRequest<LoginResponse>(`${environment.userApiBaseUrl}/auth/login`, loginRequest);
     }
 
-    public refreshToken(token: string): Observable<Object> {
-      const params = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()})
-         .set('token', token);
-
-      return this.apiClient.postRequest(`${environment.userApiBaseUrl}/auth/token/refresh`, null, params);
+    public refreshToken(refreshToken: string): Observable<LoginResponse> {
+      return this.apiClient.postRequest(`${environment.userApiBaseUrl}/auth/token/refresh`, refreshToken, null);
     }
 
     public resetPassword(resetPasswordRequest: ResetPasswordRequest): Observable<ResponseEntity> {

@@ -73,10 +73,14 @@ export class AuthService {
 
 	changeToken(token: string) {
 		this.shareTokenIntoCookie(Constants.TOKEN, token);
+		if (token == null) {
+			this.logout();
+		}
 	}
 
 	refreshToken() {
-		return this.authResourceService.refreshToken(this.getToken());
+		const refreshToken = CookieUtil.get(Constants.REFRESH_TOKEN);
+		return this.authResourceService.refreshToken(refreshToken);
 	}
 
 	getToken() {
@@ -98,8 +102,9 @@ export class AuthService {
 	}
 
 	loadAccessibleApplications() {
-		if (this.decodedToken && this.decodedToken.aud) {
-			const audience = new Array(this.decodedToken.aud);
+		const decodedToken = this.getDecodedToken();
+		if (decodedToken && decodedToken.aud) {
+			const audience = new Array(decodedToken.aud);
 			this.applications$ = this.authResourceService.findApplicationsByCodes(audience);
 			this.applications$.subscribe(apps => this.applications = apps);
 		}
