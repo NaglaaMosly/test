@@ -27,21 +27,6 @@ export class ApiClient {
     );
   }
 
-  postRequestForTextResponse(url: string, data?: any, params?: HttpParams): Observable<string> {
-    ApiClient.blockUI.start();
-    return this.httpClient.post(url, data, {
-      params: params,
-      withCredentials: false,
-      responseType: 'text'
-    }).pipe(
-      tap(() =>  ApiClient.blockUI.stop()),
-      catchError((error) => {
-        ApiClient.blockUI.stop();
-        return throwError(error.error);
-      })
-    );
-  }
-
   putRequest<T>(url: string, data?: any, params?: HttpParams): Observable<T> {
     ApiClient.blockUI.start();
     return this.httpClient.put<T>(url, data, {
