@@ -5,6 +5,7 @@ sonarqubeScanner(
     options: {
       'sonar.sources': '.',
       'sonar.inclusions': 'src/**',
+      'sonar.branch' : 'develop'
     },
   },
   () => {}
