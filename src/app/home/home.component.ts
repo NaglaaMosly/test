@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
     this.authService.logout();
   }
 
-  get loggedInUserName(): string{
+  getLoggedInUserName(): string {
     return this.authService?.getLoggedInUserName();
   }
 

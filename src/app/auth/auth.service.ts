@@ -109,7 +109,7 @@ export class AuthService {
     return CookieUtil.get(Constants.TOKEN);
   }
 
-  getDecodedToken(): string {
+  getDecodedToken(): any {
     if (this.decodedToken == null) {
       const token = this.getToken();
       if (token) {
@@ -119,7 +119,7 @@ export class AuthService {
     return this.decodedToken;
   }
 
-  getLoggedInUserName() {
+  getLoggedInUserName(): string {
     return this.getDecodedToken()?.sub;
   }
 
