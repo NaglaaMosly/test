@@ -5,7 +5,7 @@ export class Constants {
   static readonly ENGLISH_LOCAL_ID = 'en';
   static readonly ARABIC_LOCAL_ID = 'ar';
   static readonly TOKEN_EXPIRED = 'TOKEN_EXPIRED';
-  static readonly TOKEN_REFRESH_TIME_EXPIRED = 'TOKEN_REFRESH_TIME_EXPIRED';
+  static readonly INVALID_REFRESH_TOKEN = 'INVALID_REFRESH_TOKEN';
   static readonly WEEK_FORMAT_LONG_NAME = 'do [of] MMMM';
   static readonly MONTH_FORMAT_LONG_NAME = 'MMMM';
   static readonly DAY_FORMAT_LONG_NAME = 'dddd';

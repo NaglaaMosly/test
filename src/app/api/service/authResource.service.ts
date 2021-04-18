@@ -1,8 +1,6 @@
-import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClient } from '../apiClient';
-import { CustomHttpUrlEncodingCodec } from '../encoder';
 import { ApplicationModel } from '../model/applicationModel';
 import { ChangePasswordRequest } from '../model/changePasswordRequest';
 import { LoginRequest } from '../model/loginRequest';
@@ -34,11 +32,8 @@ export class AuthResourceService {
       return this.apiClient.postRequest<LoginResponse>(`${environment.userApiBaseUrl}/auth/login`, loginRequest);
     }
 
-    public refreshToken(token: string): Observable<object> {
-      const params = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()})
-         .set('token', token);
-
-      return this.apiClient.postRequest(`${environment.userApiBaseUrl}/auth/token/refresh`, null, params);
+    public refreshToken(refreshToken: string): Observable<LoginResponse> {
+      return this.apiClient.postRequest(`${environment.userApiBaseUrl}/auth/token/refresh`, refreshToken, null);
     }
 
     public resetPassword(resetPasswordRequest: ResetPasswordRequest): Observable<ResponseEntity> {

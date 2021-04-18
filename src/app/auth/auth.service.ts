@@ -1,16 +1,38 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { ChangePasswordRequest } from '../api/model/changePasswordRequest';
+import {
+  Injectable
+} from '@angular/core';
+import {
+  Router
+} from '@angular/router';
+import {
+  Observable
+} from 'rxjs';
+import {
+  tap
+} from 'rxjs/operators';
+import {
+  ChangePasswordRequest
+} from '../api/model/changePasswordRequest';
 import CookieUtil from '../shared/CookieUtil';
 import TokenUtil from '../shared/TokenUtil';
-import { ApplicationModel } from '../api/model/applicationModel';
-import { LoginRequest } from '../api/model/loginRequest';
-import { LoginResponse } from '../api/model/loginResponse';
-import { ResponseEntity } from '../api/model/responseEntity';
-import { AuthResourceService } from '../api/service/authResource.service';
-import { Constants } from '../shared/constants';
+import {
+  ApplicationModel
+} from '../api/model/applicationModel';
+import {
+  LoginRequest
+} from '../api/model/loginRequest';
+import {
+  LoginResponse
+} from '../api/model/loginResponse';
+import {
+  ResponseEntity
+} from '../api/model/responseEntity';
+import {
+  AuthResourceService
+} from '../api/service/authResource.service';
+import {
+  Constants
+} from '../shared/constants';
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +40,11 @@ import { Constants } from '../shared/constants';
 export class AuthService {
   private decodedToken;
   private applications: ApplicationModel[];
-  private applications$: Observable<ApplicationModel[]>;
+  private applications$: Observable < ApplicationModel[] > ;
 
-  constructor(private authResourceService: AuthResourceService, private router: Router) { }
+  constructor(private authResourceService: AuthResourceService, private router: Router) {}
 
-  login(userIdentifier: string, password: string): Observable<LoginResponse> {
+  login(userIdentifier: string, password: string): Observable < LoginResponse > {
     const loginRequest: LoginRequest = {
       userIdentifier,
       password
@@ -37,7 +59,7 @@ export class AuthService {
     );
   }
 
-  logout(): void{
+  logout(): void {
     this.decodedToken = null;
     this.applications = [];
     localStorage.removeItem(Constants.LOGGED_IN_USER);
@@ -46,7 +68,7 @@ export class AuthService {
     this.router.navigateByUrl('/auth/login');
   }
 
-  changePassword(changePasswordRequest: ChangePasswordRequest): Observable<ResponseEntity> {
+  changePassword(changePasswordRequest: ChangePasswordRequest): Observable < ResponseEntity > {
     return this.authResourceService.changePassword(changePasswordRequest);
   }
 
@@ -67,19 +89,23 @@ export class AuthService {
    * only the token is being saved because of cookie size limitation
    */
 
-  private shareTokenIntoCookie(name: string, value: string): void{
+  private shareTokenIntoCookie(name: string, value: string): void {
     CookieUtil.set(name, value);
   }
 
-  changeToken(token: string): void {
+  changeToken(token: string) {
     this.shareTokenIntoCookie(Constants.TOKEN, token);
+    if (token == null) {
+      this.logout();
+    }
   }
 
-  refreshToken(): Observable<object> {
-    return this.authResourceService.refreshToken(this.getToken());
+  refreshToken() {
+    const refreshToken = CookieUtil.get(Constants.REFRESH_TOKEN);
+    return this.authResourceService.refreshToken(refreshToken);
   }
 
-  getToken(): string {
+  getToken() {
     return CookieUtil.get(Constants.TOKEN);
   }
 
@@ -94,10 +120,10 @@ export class AuthService {
   }
 
   getLoggedInUserName() {
-    return this.getDecodedToken()?.sub || null;
+    return this.getDecodedToken() ? .sub || null;
   }
 
-  getAccessibleApplication(): ApplicationModel[]{
+  getAccessibleApplication(): ApplicationModel[] {
     if (this.applications == null && this.applications$ == null) {
       this.loadAccessibleApplications();
     }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../auth/auth.service';
 import { ArabicStyleLoaderService } from '../shared/arabic-style-loader.service';
@@ -10,7 +10,7 @@ import {ApplicationModel} from '../api/model/applicationModel';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
 
   applications;
 
@@ -19,9 +19,15 @@ export class HomeComponent {
               private arabicStyleLoader: ArabicStyleLoaderService) {
   }
 
-  changeLocal(): void {
-    this.translate.currentLang === Constants.ENGLISH_LOCAL_ID ? this.arabicStyleLoader.load() : this.arabicStyleLoader.unload();
-  }
+	ngOnInit() {
+		if (!this.authService.isUserLoggedIn()) {
+			this.logout();
+		}
+	}
+
+	changeLocal() {
+		this.translate.currentLang === Constants.ENGLISH_LOCAL_ID ? this.arabicStyleLoader.load() : this.arabicStyleLoader.unload();
+	}
 
   logout(): void {
     this.authService.logout();
