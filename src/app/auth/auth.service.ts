@@ -120,7 +120,7 @@ export class AuthService {
   }
 
   getLoggedInUserName() {
-    return this.getDecodedToken() ? .sub || null;
+    return this.getDecodedToken()?.sub;
   }
 
   getAccessibleApplication(): ApplicationModel[] {
