@@ -93,19 +93,19 @@ export class AuthService {
     CookieUtil.set(name, value);
   }
 
-  changeToken(token: string) {
+  changeToken(token: string): void {
     this.shareTokenIntoCookie(Constants.TOKEN, token);
     if (token == null) {
       this.logout();
     }
   }
 
-  refreshToken() {
+  refreshToken() : Observable<LoginResponse> {
     const refreshToken = CookieUtil.get(Constants.REFRESH_TOKEN);
     return this.authResourceService.refreshToken(refreshToken);
   }
 
-  getToken() {
+  getToken(): string {
     return CookieUtil.get(Constants.TOKEN);
   }
 

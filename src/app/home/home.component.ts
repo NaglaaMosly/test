@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
 		}
 	}
 
-	changeLocal() {
+	changeLocal(): void {
 		this.translate.currentLang === Constants.ENGLISH_LOCAL_ID ? this.arabicStyleLoader.load() : this.arabicStyleLoader.unload();
 	}
 
