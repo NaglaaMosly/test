@@ -40,7 +40,7 @@ import {
 export class AuthService {
   private decodedToken;
   private applications: ApplicationModel[];
-  private applications$: Observable < ApplicationModel[] > ;
+  private applications$: Observable<ApplicationModel[]> ;
 
   constructor(private authResourceService: AuthResourceService, private router: Router) {}
 
@@ -131,8 +131,10 @@ export class AuthService {
   }
 
   loadAccessibleApplications(): void {
-    this.authResourceService.findAccessibleApplications()
-      .subscribe(apps => this.applications = apps);
+    this.applications$ = this.authResourceService.findAccessibleApplications();
+    this.applications$.subscribe(
+        apps => this.applications = apps,
+        error => this.applications = []);
   }
 
   public registerRedirectionAndAskForNewOne(): boolean {
