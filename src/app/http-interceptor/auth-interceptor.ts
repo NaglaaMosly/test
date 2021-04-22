@@ -40,6 +40,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     if (error.error && error.error.errorCode === Constants.INVALID_REFRESH_TOKEN) {
       this.authService.logout();
+      return throwError(error);
     }
 
     switch (true) {

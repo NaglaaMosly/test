@@ -8,8 +8,6 @@ spec:
   selector:
     matchLabels:
       name: be-login-ui-develop
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
