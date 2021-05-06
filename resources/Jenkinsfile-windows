@@ -85,6 +85,7 @@ pipeline {
 		}
 		
 		stage('Archive') {
+		
 			environment {
 	 			NEW_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-8 ", returnStdout: true).trim()}"
 			}
@@ -97,7 +98,6 @@ pipeline {
 			
 		stage('Deploy on windows server') {
 		  	steps{
-				sh "echo ${NEW_VERSION}"
 			  
 			//confirmation
 			script {
