@@ -1,14 +1,11 @@
-import java.time.*
-import java.time.format.DateTimeFormatter
-
 pipeline {
 
 	agent any
 	
 	environment {
 	 	PROJECT_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-7 ", returnStdout: true).trim()}"
-		currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm"))
-		pattern = "-build##-${currentTime}"
+		currentTime = new Date().format("yyyy-MM-dd'T'HH-mm", TimeZone.getTimeZone("Africa/Cairo"))
+		pattern = "-build${BUILD_ID}-${currentTime}"
 		}
 		
 	stages {
@@ -18,8 +15,7 @@ pipeline {
 				sh 'printenv';
 				
 			script {
-					//load("./${GIT_LOCAL_BRANCH}-properties")
-					load("./alpha-properties")
+					load("./${GIT_LOCAL_BRANCH}-properties")
 				  }
 				sh "echo imageTag: ${imageTag}"
 				sh "echo imageName: ${imageName}"
