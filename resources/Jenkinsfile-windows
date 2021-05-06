@@ -102,7 +102,7 @@ pipeline {
 			  
 			//confirmation
 			script {
-                	timeout(time: 5, unit: 'MINUTES') {
+                	timeout(time: 15, unit: 'MINUTES') {
                     input(id: "Deploy Gate", message: "Deploying to testing machine", ok: 'Deploy') }
            		}
 
