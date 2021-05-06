@@ -3,7 +3,7 @@ pipeline {
 	agent any
 	
 	environment {
-	 	PROJECT_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-7 ", returnStdout: true).trim()}"
+	 	PROJECT_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-8 ", returnStdout: true).trim()}"
 		currentTime = new Date().format("yyyy-MM-dd'T'HH-mm", TimeZone.getTimeZone("Africa/Cairo"))
 		pattern = "-build${BUILD_ID}-${currentTime}"
 		}
@@ -94,7 +94,7 @@ pipeline {
 			
 		stage('Deploy on windows server') {
 	    	environment {
-	 			NEW_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-7 ", returnStdout: true).trim()}"
+	 			NEW_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-8 ", returnStdout: true).trim()}"
 			}
 			
 		  	steps{
