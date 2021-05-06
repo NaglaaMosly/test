@@ -85,18 +85,17 @@ pipeline {
 		}
 		
 		stage('Archive') {
+			environment {
+	 			NEW_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-8 ", returnStdout: true).trim()}"
+			}
             steps {
 				sh "cp resources/.htaccess   be-login"
-            	sh 'tar -cvzf  "be-login${pattern}.tar.gz"  --strip-components=1  be-login/*'
-                archiveArtifacts artifacts: "be-login${pattern}.tar.gz"
+            	sh 'tar -cvzf  "be-login-${NEW_VERSION}${pattern}.tar.gz"  --strip-components=1  be-login/*'
+                archiveArtifacts artifacts: "be-login-${NEW_VERSION}${pattern}.tar.gz"
            }
 		}
 			
 		stage('Deploy on windows server') {
-	    	environment {
-	 			NEW_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-8 ", returnStdout: true).trim()}"
-			}
-			
 		  	steps{
 				sh "echo ${NEW_VERSION}"
 			  
@@ -105,15 +104,13 @@ pipeline {
                 	timeout(time: 15, unit: 'MINUTES') {
                     input(id: "Deploy Gate", message: "Deploying to testing machine", ok: 'Deploy') }
            		}
-
-				sh "cp -r be-login${pattern}.tar.gz    be-login@${NEW_VERSION}${pattern}.tar.gz "
 					   
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
 				transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
 					 
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
 				transfers: [sshTransfer( remoteDirectory: 'archive-ui/be-login/', \
-						                 sourceFiles: 'be-login@*.gz/**')])])
+						                 sourceFiles: 'be-login-*.gz/**')])])
 				
 				sh 'ssh Administrator@10.95.0.178  powershell.exe  ls C:/Apache24/htdocs/archive-ui/be-login'
 				
