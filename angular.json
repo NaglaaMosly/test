@@ -56,7 +56,7 @@
                 }
               ]
             },
-             "dev": {
+            "dev": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -82,8 +82,8 @@
                   "maximumError": "10kb"
                 }
               ]
-              },
-              "develop": {
+            },
+            "develop": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -109,8 +109,8 @@
                   "maximumError": "10kb"
                 }
               ]
-              },
-              "alpha": {
+            },
+            "alpha": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -202,5 +202,8 @@
       }
     }
   },
-  "defaultProject": "be-login-ui"
+  "defaultProject": "be-login-ui",
+  "cli": {
+    "analytics": false
+  }
 }
