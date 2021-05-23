@@ -3,14 +3,15 @@ pipeline {
 	agent any
 	
 	environment {
-	 	PROJECT_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-7 ", returnStdout: true).trim()}"
 		currentTime = new Date().format("yyyy-MM-dd'T'HH-mm", TimeZone.getTimeZone("Africa/Cairo"))
 		pattern = "-build${BUILD_ID}-${currentTime}"
-		}
+		packageJSON = readJSON file: 'package.json'
+        PROJECT_VERSION = "${packageJSON.version}"
+	}
 		
 	stages {
 		  
-		stage('Load env variables') {
+		stage('Initialization') {
 			steps {
 				sh 'printenv';
 				
@@ -26,7 +27,7 @@ pipeline {
 		    }
 		}
 		
-	    stage("Interactive_Input") {
+	    stage("Setting Version") {
 				
        		steps {
                 script {
@@ -70,24 +71,24 @@ pipeline {
 
 		stage('Build stage') {
         	steps {
-				sh "docker stop ${containerName} || true && docker rm ${containerName} || true && docker rmi ${imageName}:${imageTag} || true "
+				sh "docker stop ${containerName} || true && docker rm ${containerName} || true && docker rmi ${imageName}:${env.PROJECT_VERSION} || true "
 				sh "rm -rf ./be-login  ./be-login*.gz "	
-				sh "docker build -f resources/Dockerfile-win  -t ${imageName}:${imageTag} ."
-                sh "docker run -d --name ${containerName}  ${imageName}:${imageTag}"
-            }  
-		}	    	
-			
-		stage('Transition stage') {
-			steps {
-				//copy files from the container to the job
-				sh "docker cp ${containerName}:/opt/app/dist  ./be-login"
-			}
-		}
-		
-		stage('Archive') {
+				sh "docker build -f resources/Dockerfile-win  -t ${imageName}:${env.PROJECT_VERSION} ."
+                sh "docker run -d --name ${containerName}  ${imageName}:${env.PROJECT_VERSION}"
+            }
+            post {
+                success {
+					sh "docker cp ${containerName}:/opt/app/dist  ./be-login"
+					sh "docker stop ${containerName}  || true"
+				}
+            }
+        }	    	
+
+		stage('Archive Artifacts') {
 		
 			environment {
-	 			NEW_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-7 ", returnStdout: true).trim()}"
+	 			packageJSON = readJSON file: 'package.json'
+        		NEW_VERSION = "${packageJSON.version}"
 			}
             steps {
 				sh "cp resources/.htaccess   be-login"
@@ -98,10 +99,8 @@ pipeline {
 			
 		stage('Deploy on windows server') {
 		  	steps{
-			  
-			//confirmation
-			script {
-                	timeout(time: 15, unit: 'MINUTES') {
+				script {
+                	timeout(time: 60, unit: 'MINUTES') {
                     input(id: "Deploy Gate", message: "Deploying to testing machine", ok: 'Deploy') }
            		}
 					   
