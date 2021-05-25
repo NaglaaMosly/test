@@ -4,77 +4,72 @@ pipeline {
 	
 	stages {
 		  
-		stage('Load env variables') {
+		stage('Initialization') {
+		
 			steps {
 				sh 'printenv';
 				
 			script {
 					load("./${GIT_LOCAL_BRANCH}-properties")
-				  }
+			}
 				sh "echo imageTag: ${imageTag}"
 				sh "echo imageName: ${imageName}"
 				sh "echo containerName: ${containerName}"
-				sh "echo app_profile: ${app_profile}"	
+				sh "echo app_profile: ${app_profile}"
+				
+				sh ("sed -i.bak 's#app_profile#${app_profile}#g'  resources/Dockerfile-build")	
 		    }
 		}
-		
-		stage('Set env variables') {
-			steps {
-                  sh ("sed -i.bak 's#app_profile#${app_profile}#g'  resources/Dockerfile-build")
-				}
-			}
 
-	    stage('Build stage') {
-        		steps {
+	    stage('Build') {
+		
+        	steps {
 				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true && docker rmi ${imageName}-build:${imageTag} || true"
 				sh "rm -rf ./dist"	
 				sh "docker build -f resources/Dockerfile-build  -t ${imageName}-build:${imageTag} ."
                 sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
-            	}  
-	    	}
+            }
+            post {
+                success {
+					sh "docker cp ${containerName}-build:/opt/app/dist  ."
+					sh "docker stop ${containerName}-build"
+				}
+            }
+        }
 			
-		stage('Transition stage') {
-			steps {
-				//copy files from the container to the job
-				sh "docker cp ${containerName}-build:/opt/app/dist  ."
-				sh "docker stop ${containerName}-build"
-			}
-		}
-			
-		
-		stage('Archive') {
+		stage('Archive Artifacts') {
 
             steps {
-                    sh 'tar -cvzf be-login-ui.tar.gz --strip-components=1  ./dist'
-                    archiveArtifacts 'be-login-ui.tar.gz'
-                }
+            	sh 'tar -cvzf be-login-ui.tar.gz --strip-components=1  ./dist'
+                archiveArtifacts 'be-login-ui.tar.gz'
             }
-	
-			
-	   stage("Docker Push"){
+		}
+		
+	    stage("Docker Push to private repo") {
+	   
 			steps {
 			    sh "docker build -f resources/Dockerfile-k8s -t node2:5000/${imageName}${imageTag} -t node2:5000/${imageName}:${BUILD_ID} ."
 				sh "docker push node2:5000/${imageName}:${BUILD_ID}"
-				}
 			}
+		 }
 			
-		  stage('Deploy on k8s') {
+	     stage('Deploy on k8s') {
 		  
-		  		agent { 
-                     docker { image "node2:5000/${imageName}:${BUILD_ID}" 
-                      args '-v /var/run/docker.sock:/var/run/docker.sock  -v /home/devops/.kube/config:/root/.kube/config' } 
-                 	}
+		 	agent { 
+            	docker { image "node2:5000/${imageName}:${BUILD_ID}" 
+                      	 args '-v /var/run/docker.sock:/var/run/docker.sock  -v /home/devops/.kube/config:/root/.kube/config' } 
+			}
 					 
-	            steps {
+	        steps {
 				
-					//Set env variables
-					sh "sed -i.bak 's#BUILDID#${env.BUILD_ID}#'                   resources/deployment.yaml"
+				//Set env variables
+				sh "sed -i.bak 's#BUILDID#${env.BUILD_ID}#'                   resources/deployment.yaml"
 					
-				    sh ("kubectl apply -f resources/ns.yaml")
-					sh ("kubectl apply -f resources/svc.yaml")
-					sh ("kubectl apply -f resources/deployment.yaml")
+				sh ("kubectl apply -f resources/ns.yaml")
+				sh ("kubectl apply -f resources/svc.yaml")
+				sh ("kubectl apply -f resources/deployment.yaml")
 					
-					sh "echo you can access app by visiting http://10.95.0.182:30817"
+				sh "echo you can access app by visiting http://10.95.0.182:30817"
 			}	
 		}
 	}
