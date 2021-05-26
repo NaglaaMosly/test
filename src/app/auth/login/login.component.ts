@@ -3,6 +3,9 @@ import { environment } from './../../../environments/environment';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import TokenUtil from 'src/app/shared/TokenUtil';
+import { ApplicationModel } from 'src/app/api/model/applicationModel';
+import { AuthResourceService } from 'src/app/api/service/authResource.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +22,7 @@ export class LoginComponent implements OnInit {
   identifierPattern = "^([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$)|((010|011|012|015)[0-9]{8})$";
   private params: Params;
 
-  constructor(private authService: AuthService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private authService: AuthService, private route: ActivatedRoute, private router: Router, private authResourceService: AuthResourceService) { }
 
   ngOnInit(): void {
     this.initRedirectUrl();
@@ -58,8 +61,7 @@ export class LoginComponent implements OnInit {
         } else if (this.redirectTo) {
             window.location.href = this.redirectTo;
         } else {
-            this.router.navigateByUrl('/');
-            console.log('LOGGED IN - TODO');
+            this.chooseWhichAppToNavigate();
         }
       }, error => {
 
@@ -77,5 +79,18 @@ export class LoginComponent implements OnInit {
 
   checkIfTestingEnvironment() {
     return window.location.host !== environment.liveEnvironmentHost;
+  }
+
+  chooseWhichAppToNavigate() {
+    this.authResourceService.findAccessibleApplications()
+      .subscribe(apps => this.navigateTo(apps));
+  }
+
+  navigateTo(apps: ApplicationModel[]) {    
+    if(apps && apps.length > 0) {
+      window.location.href = apps[0].url;
+    } else {
+      this.router.navigateByUrl('/');
+    }
   }
 }

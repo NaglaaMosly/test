@@ -3,18 +3,20 @@ pipeline {
 	agent any
 	
 	environment {
-	 	PROJECT_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-7 ", returnStdout: true).trim()}"
-		}
+		currentTime = new Date().format("yyyy-MM-dd'T'HH-mm", TimeZone.getTimeZone("Africa/Cairo"))
+		pattern = "-build${BUILD_ID}-${currentTime}"
+		packageJSON = readJSON file: 'package.json'
+        PROJECT_VERSION = "${packageJSON.version}"
+	}
 		
 	stages {
 		  
-		stage('Load env variables') {
+		stage('Initialization') {
 			steps {
 				sh 'printenv';
 				
 			script {
-					//load("./${GIT_LOCAL_BRANCH}-properties")
-					load("./alpha-properties")
+					load("./${GIT_LOCAL_BRANCH}-properties")
 				  }
 				sh "echo imageTag: ${imageTag}"
 				sh "echo imageName: ${imageName}"
@@ -25,7 +27,7 @@ pipeline {
 		    }
 		}
 		
-	    stage("Interactive_Input") {
+	    stage("Setting Version") {
 				
        		steps {
                 script {
@@ -61,7 +63,7 @@ pipeline {
                     }
 					//changing build name
 					currentBuild.displayName = "V${USER_INPUT}"
-                    currentBuild.description = "#${BUILD_NUMBER} (V${USER_INPUT})"
+                    currentBuild.description = "#${BUILD_NUMBER} (V${USER_INPUT}${pattern})"
                	 }
             }
         }
@@ -69,50 +71,45 @@ pipeline {
 
 		stage('Build stage') {
         	steps {
-				sh "docker stop ${containerName} || true && docker rm ${containerName} || true && docker rmi ${imageName}:${imageTag} || true "
+				sh "docker stop ${containerName} || true && docker rm ${containerName} || true && docker rmi ${imageName}:${env.PROJECT_VERSION} || true "
 				sh "rm -rf ./be-login  ./be-login*.gz "	
-				sh "docker build -f resources/Dockerfile-win  -t ${imageName}:${imageTag} ."
-                sh "docker run -d --name ${containerName}  ${imageName}:${imageTag}"
-            }  
-		}	    	
-			
-		stage('Transition stage') {
-			steps {
-				//copy files from the container to the job
-				sh "docker cp ${containerName}:/opt/app/dist  ./be-login"
-			}
-		}
+				sh "docker build -f resources/Dockerfile-win  -t ${imageName}:${env.PROJECT_VERSION} ."
+                sh "docker run -d --name ${containerName}  ${imageName}:${env.PROJECT_VERSION}"
+            }
+            post {
+                success {
+					sh "docker cp ${containerName}:/opt/app/dist  ./be-login"
+					sh "docker stop ${containerName}  || true"
+				}
+            }
+        }	    	
+
+		stage('Archive Artifacts') {
 		
-		stage('Archive') {
+			environment {
+	 			packageJSON = readJSON file: 'package.json'
+        		NEW_VERSION = "${packageJSON.version}"
+			}
             steps {
 				sh "cp resources/.htaccess   be-login"
-            	sh 'tar -cvzf  be-login.tar.gz  --strip-components=1  be-login/*'
-                archiveArtifacts artifacts: 'be-login.tar.gz'
+            	sh 'tar -cvzf  "be-login-${NEW_VERSION}${pattern}.tar.gz"  --strip-components=1  be-login/*'
+                archiveArtifacts artifacts: "be-login-${NEW_VERSION}${pattern}.tar.gz"
            }
 		}
 			
 		stage('Deploy on windows server') {
-	    	environment {
-	 			NEW_VERSION = "${sh(script:"sed -n '3p' package.json | cut -f 2 -d':'| cut -b 3-7 ", returnStdout: true).trim()}"
-			}
-			
 		  	steps{
-				sh "echo ${NEW_VERSION}"
-			  
-			//confirmation
-			script {
-                	timeout(time: 5, unit: 'MINUTES') {
+				script {
+                	timeout(time: 60, unit: 'MINUTES') {
                     input(id: "Deploy Gate", message: "Deploying to testing machine", ok: 'Deploy') }
            		}
-
-				sh "cp -r be-login.tar.gz    be-login@${NEW_VERSION}.tar.gz "
 					   
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
 				transfers: [sshTransfer( sourceFiles: 'be-login/**')])])
 					 
 				sshPublisher(publishers: [sshPublisherDesc(configName: 'windows-deploy', \
 				transfers: [sshTransfer( remoteDirectory: 'archive-ui/be-login/', \
-						                 sourceFiles: 'be-login@*.gz/**')])])
+						                 sourceFiles: 'be-login-*.gz/**')])])
 				
 				sh 'ssh Administrator@10.95.0.178  powershell.exe  ls C:/Apache24/htdocs/archive-ui/be-login'
 				
