@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { AuthModule } from './auth/auth.module';
 import { HomeModule } from './home/home.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MessageService } from 'primeng/api';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -39,6 +40,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     BrowserAnimationsModule
   ],
+	providers: [
+		MessageService
+	],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
