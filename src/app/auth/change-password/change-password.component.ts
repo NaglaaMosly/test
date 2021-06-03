@@ -42,9 +42,6 @@ export class ChangePasswordComponent implements OnInit {
       .subscribe(response => {
         this.router.navigate(['/auth', 'login'], { queryParams: this.params });
         sessionStorage.removeItem('temp_token');
-      }, error => {
-        this.notificationService
-          .notifyError(error.error);
       });
   }
 }
