@@ -13,7 +13,6 @@ spec:
       labels:
         name: be-login-ui-develop
     spec:
-      nodeName: node5
       containers:
       - name: be-login-ui-develop
         image: node2:5000/be-login-ui-develop:BUILDID
