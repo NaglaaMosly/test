@@ -12,6 +12,7 @@ pipeline {
 	stages {
 		  
 		stage('Initialization') {
+		
 			steps {
 				sh 'printenv';
 				
@@ -69,7 +70,8 @@ pipeline {
         }
 
 
-		stage('Build stage') {
+		stage('Build') {
+		
         	steps {
 				sh "docker stop ${containerName} || true && docker rm ${containerName} || true && docker rmi ${imageName}:${env.PROJECT_VERSION} || true "
 				sh "rm -rf ./be-login  ./be-login*.gz "	
