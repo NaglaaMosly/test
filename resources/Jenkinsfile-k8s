@@ -22,9 +22,9 @@ pipeline {
 		}
 
 	    stage('Build') {
-		
         	steps {
-				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true && docker rmi ${imageName}-build:${imageTag} || true"
+				sh "docker stop ${containerName}-build || true && docker rm ${containerName}-build || true "
+				sh "docker rmi ${imageName}-build:${imageTag} || true"
 				sh "rm -rf ./dist"	
 				sh "docker build -f resources/Dockerfile-build  -t ${imageName}-build:${imageTag} ."
                 sh "docker run -d --name ${containerName}-build  ${imageName}-build:${imageTag}"
@@ -32,13 +32,12 @@ pipeline {
             post {
                 success {
 					sh "docker cp ${containerName}-build:/opt/app/dist  ."
-					sh "docker stop ${containerName}-build"
+					sh "docker stop ${containerName}-build && docker rm ${containerName}-build || true"
 				}
             }
         }
 			
 		stage('Archive Artifacts') {
-
             steps {
             	sh 'tar -cvzf be-login-ui.tar.gz --strip-components=1  ./dist'
                 archiveArtifacts 'be-login-ui.tar.gz'
@@ -46,7 +45,6 @@ pipeline {
 		}
 		
 	    stage("Docker Push to private repo") {
-	   
 			steps {
 			    sh "docker build -f resources/Dockerfile-k8s -t node2:5000/${imageName}${imageTag} -t node2:5000/${imageName}:${BUILD_ID} ."
 				sh "docker push node2:5000/${imageName}:${BUILD_ID}"
